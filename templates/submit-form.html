@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Elemental Analysis Calculator</title>
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootswatch/3.0.0/flatly/bootstrap.min.css">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <meta name="google-site-verification" content="Y79BxTt4LQQyR2TwMdYkBa7KnRggtINCA6S-v7rsqAg" />
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-43106562-1', 'chn-solvent.appspot.com');
+      ga('send', 'pageview');
+    </script>
+  </head>
+  
+  <body>
+    <header>
+      <div class="navbar navbar-static-top navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+            </button>
+            <a href="/ea" class="navbar-brand">Elemental Analysis Calculator</a>
+          </div>
+          <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+              <li class="active">
+                <a href="/ea">Home</a>
+              </li>
+              <li>
+                <a href="/about">About</a>
+              </li>
+              <li>
+                <a href="/contact">Contact</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="row">
+        <form method="post">
+          <div class="col-md-6">
+            <label class="form-label">Enter your sample's formula:</label>
+            <input type="text" class="form-control pull-right input-sm" name="formula" value="{{formula}}">
+            <div class="form-group">
+              <label class="control-label">Experimental Results:</label>
+              <div class="controls">
+                <table class="table table-condensed">
+                  <tbody>
+                    {% for e in exp_variables %}
+                    <tr>
+                      <td>
+                        <label class="form-label">{{e[0]}}</label>
+                      </td>
+                      <td>
+                        <input type="text" name="{{e[1]}}" value="{{e[2]}}" class="form-control input-sm">
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="control-label">Possible Solvent Contaminents. <br> More than 3 solvents likely won't finish calculating.</label>
+              <div class="controls">
+                {% for s in solvent_variables %}
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" name="solvent" value="{{s[0]}}" {{'checked="yes"' if s[1][1] == True|safe}}> {{s[1][0]}}</label>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+  
+            <table class="table">
+              <tbody>
+                {% for o in other_variables %}
+                <tr>
+                  <td>
+                    <label class="form-label">Other Solvent:</label>
+                  </td>
+                  <td>
+                    <input type="text" name={{o[1]}} value="{{o[0]}}" class="form-control input-sm">
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+  
+            <input type="submit" value="Calculate">
+            <input type="reset">
+          </div>
+        </form>
+      </div>
+
+      {% if error %}
+      <div class="container">
+        <p class="clearfix"></p>
+      </div>
+      <div class="alert alert-danger">
+        {{error}}
+      </div>
+      {% endif %}
+      <a href="/ea/help" class="btn btn-primary">How to Use</a>
+      <hr>
+    </div>
+
+    <footer>
+      <div class="container">&copy; 2013 Philip Bulsink</div>
+    </footer>
+
+  </body>
+
+</html>
