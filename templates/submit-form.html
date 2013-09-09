@@ -26,7 +26,7 @@
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
               <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
             </button>
-            <a href="/ea" class="navbar-brand">Elemental Analysis Calculator</a>
+            <a href="/ea" class="navbar-brand">ChemCalculator</a>
           </div>
           <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
@@ -102,6 +102,7 @@
   
             <input type="submit" value="Calculate">
             <input type="reset">
+            <a href="/ea/help"><input type="button" value="How to Use"></a>
           </div>
         </form>
       </div>
@@ -114,14 +115,13 @@
         {{error}}
       </div>
       {% endif %}
-      <a href="/ea/help" class="btn btn-primary">How to Use</a>
       <hr>
     </div>
 
     <footer>
       <div class="container">&copy; 2013 Philip Bulsink</div>
     </footer>
-
+    <br>
   </body>
 
 </html>

@@ -115,7 +115,7 @@ def render_results(results, exp, solvent, formula):
             try:
                 r.append(float(r[3]-float(r[1])))
             except:
-                logging.exception("error ln 146 %s" % str(r))
+                logging.exception("error ln 116 %s, %s" % (str(r[0]), str(rexp)))
         diff= results[5]
         result_formula = formula + '*'
         #eventual printing out of formula * solvents. requires dictionary or modified solvent_correct.
@@ -176,25 +176,15 @@ class EaResultHandler(Handler):
             exp = dict(literal_eval(e))
         elif e == None:
             self.redirect('/ea/?r=ece')
-        sec_results = self.request.cookies.get('r')
-        
 
-        if sec_results == "" or sec_results == None:
-            if formula == "":
-                #No formula given. Arrives by typing in link?
-                self.redirect('/ea/?r=nf')
-            #Else new results needed
-            elif solvent == []:
-                results = get_ea(fparsed)
-            else:
-                results = solvent_calculate(fparsed, solvent, exp)
-            rendered_results = render_results(results, exp, solvent, formula)
-            self.response.set_cookie('r', make_secure_val(rendered_results))
+        if formula == "":
+            self.redirect('/ea/?r=nf')
+        #Else new results needed
+        elif solvent == []:
+            results = get_ea(fparsed)
         else:
-            results = check_secure_val(sec_results)
-            if not results:
-                self.redirect('/ea/?r=ecr')
-            rendered_results = literal_eval(results)
+            results = solvent_calculate(fparsed, solvent, exp)
+        rendered_results = render_results(results, exp, solvent, formula)
 
         template_values = {'formula':formula,
                            'rtype':rendered_results['rtype'],
@@ -273,41 +263,35 @@ class EaMainPage(Handler):
             elif r == "r":
                 for s in solvent_list:
                     s[1][1]=False
-                self.response.set_cookie('f', "")
-                self.response.set_cookie('s', "")
-                self.response.set_cookie('e', "")
-                self.response.set_cookie('r', "")
             elif r == "c":
                 formula = check_secure_val(self.request.cookies.get('f'))
-                self.response.set_cookie('r', "")
                 s = check_secure_val(self.request.cookies.get('s'))
                 if s:
                     sol = literal_eval(s)
-                for s in sol:
-                    for t in solvent_list:
-                        if s[0]==t[1][0]:
-                            t[1][1]=True
+                    for s in sol:
+                        for t in solvent_list:
+                            if s[0]==t[1][0]:
+                                t[1][1]=True
                 e = check_secure_val(self.request.cookies.get('e'))
                 if e:
                     exp = literal_eval(e)
-                for e in exp:
-                    for f in e_var:
-                        if e[0] == f[0]:
-                            f[2]=e[1]
+                    for e in exp:
+                        for f in e_var:
+                            if e[0] == f[0]:
+                                f[2]=e[1]
             elif r == 'e':
                 error = "Woops! Something went wrong. The admin has been notified. Please try again, refresh the page, or come back in a few days if it still doesn't work"
             elif r == 'ec':
                 error = "Don't modify cookies... enter new values"
-                self.response.set_cookie('f', "")
-                self.response.set_cookie('s', "")
-                self.response.set_cookie('e', "")
-                self.response.set_cookie('r', "")
             elif r.isnumeric():
                 error = "An error %s happened. Please try again" % r
 
         template_values = {"formula":formula, "exp_variables":e_var,
                            "solvent_variables":solvent_list, "error":error,
                            "other_variables":other_variables}
+        self.response.set_cookie('f', "")
+        self.response.set_cookie('s', "")
+        self.response.set_cookie('e', "")
         self.render_front(template_values)
 
     def post(self):
@@ -372,9 +356,6 @@ class EaMainPage(Handler):
         if exp == False:
             #want normal value
             if solvents == []:
-                self.response.set_cookie('s', "")
-                self.response.set_cookie('e', "")
-                self.response.set_cookie('r', "")
                 self.response.set_cookie('f', make_secure_val(formula))
                 self.redirect("/ea/results/")
             else:
@@ -390,7 +371,6 @@ class EaMainPage(Handler):
             for e in e_var:
                 if e[2] != "":
                     experimentals.append((e[0], e[2]))
-            self.response.set_cookie('r', "")
             self.response.set_cookie('f', make_secure_val(formula))
             self.response.set_cookie('s', make_secure_val(solvents))
             self.response.set_cookie('e', make_secure_val(experimentals))
