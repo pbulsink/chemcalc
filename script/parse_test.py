@@ -16,6 +16,8 @@ class TestParser(unittest.TestCase):
         self.goodSingleDot = "CH3CH2CH2CH3*2H2O"
         self.goodDoubleDot = "CH3CH2CH2CH3*H2O*CH3OH"
         self.goodSpaces = " CH3CH2 CH2  C(NO)2 H  "
+        self.goodSingleThree = "Uuo"
+        self.goodMultiThree = "C3UutH5"
         self.badOpenBracket = "CH2((NO2)2"
         self.badCloseBracket = "CH2)Cl2"
         self.badSingleElement = "Pj"
@@ -105,6 +107,16 @@ class TestParser(unittest.TestCase):
     def test_empty_string(self):
         """Test for an empty string"""
         self.assertRaises(ValueError, parse, "")
+
+    def test_good_single_three(self):
+        """Test for three letter element"""
+        self.assertEqual(parse(self.goodSingleThree).return_elements(),
+                         [('Uuo', 1)])
+
+    def test_good_multi_three(self):
+        """Test for three letter element in formula"""
+        self.assertEqual(parse(self.goodMultiThree).return_elements(),
+                         [('C', 3), ('H', 5), ('Uut', 1)])
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

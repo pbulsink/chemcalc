@@ -78,17 +78,9 @@
                 {% endif %}
               </tr>
               {% endfor %}
-              <tr>
-                <td>Molar Mass:</td>
-                <td>{{'%0.2f' % mmass}}</td>
-                {% if rtype == "calc" %}
-                <td></td>
-                <td></td>
-                <td></td>
-                {% endif %}
-              </tr>
             </tbody>
           </table>
+          <p>Molar Mass: {{'%0.2f' % mmass}} g/mol</p>
         </div>
         {% if rtype == "calc" %}
         <div class="col-md-6">

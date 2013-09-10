@@ -72,7 +72,6 @@ def solvent_calculate(formula, sols, exp):
         solvents.append(Molecule(parsed_sol, 0, s[0]))
     global EXPERIMENTALS
     EXPERIMENTALS = dict(exp)
-    start_time = time.time()
     looped = cycle_solvents(formula, solvents)
     logging.info("Calculation required %s loops" % looped)
     sol_results = []
