@@ -26,3 +26,7 @@ script/htmlcov/parse.html
 script/htmlcov/status.dat
 
 script/htmlcov/style.css
+
+.DS_Store
+
+.coverage

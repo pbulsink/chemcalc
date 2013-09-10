@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import string
+from table_of_exact_masses import TABLE_OF_MASS
 
 _data = r"""'Ac', 'Actinium', 89, 227.03
 'Ag', 'Silver', 47, 107.868
@@ -128,10 +129,18 @@ class Element:
         self.name = name
         self.ano = atomicnumber
         self.mw = molweight
+        self.has_isotopes = False
+        self.isotopes = list()
 
     def addsyms(self, weight, result):
         result[self.sym] = result.get(self.sym, 0) + weight
 
+    def add_isotopes(self, isotope):
+        self.has_isotopes = True
+        self.isotopes = isotope
+
+    def get_isotopes(self):
+        return self.isotopes
 
 def build_dict(s):
     """Make the element list into a dictionary"""
@@ -139,7 +148,14 @@ def build_dict(s):
     for line in string.split(s, "\n"):
         symbol, name, num, weight = eval(line)
         answer[symbol] = Element(symbol, name, num, weight)
+    for key in answer:
+        if key in TABLE_OF_MASS:
+            answer[key].add_isotopes(TABLE_OF_MASS[key].isotopes)
     return answer
 
 
 ELEMENTS = build_dict(_data)
+
+for key in ELEMENTS:
+    print ELEMENTS[key].sym
+    print ELEMENTS[key].isotopes
