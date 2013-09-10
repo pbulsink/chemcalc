@@ -1,40 +1,47 @@
 #!/usr/bin/env python
-# symbol, name, atomic number, molecular weight
 import re
 import string
 from elements_list import ELEMENTS
 
-sym2elt = ELEMENTS
+NAME, NUM, LPAREN, RPAREN, EOS = range(5)
+IS_EL_RE = re.compile(r"[A-Z][a-z]*|\d+|[()]|\*|<EOS>").match
+ttype = ""
+tvalue = ""
+t = ""
+
 
 class ElementSequence:
+    """The molecule chunks represented as a sequence of elements"""
     def __init__(self, *seq):
         self.seq = list(seq)
         self.count = 1
         self.items = ""
 
-    def append(self, thing):
-        self.seq.append(thing)
+    def append(self, element):
+        """Append an element to the sequence"""
+        self.seq.append(element)
 
     def set_count(self, n):
+        """How often the chunk is repeated"""
         self.count = n
 
     def __len__(self):
         return len(self.seq)
 
     def addsyms(self, weight, result):
+        """Add a goup of symbols to the sequence"""
         totalweight = weight * self.count
         for thing in self.seq:
             thing.addsyms(totalweight, result)
 
     def return_elements(self):
+        """Return the elements"""
         result = {}
         self.addsyms(1, result)
         self.items = result.items()
         self.items.sort()
         return self.items
 
-NAME, NUM, LPAREN, RPAREN, EOS = range(5)
-IS_EL_RE = re.compile(r"[A-Z][a-z]*|\d+|[()]|\*|<EOS>").match
 
 class Tokenizer:
     def __init__(self, input):
@@ -42,6 +49,7 @@ class Tokenizer:
         self.i = 0
 
     def gettoken(self):
+        """Grab the next character from the backand see what it is"""
         global ttype, tvalue
         self.lasti = self.i
         m = IS_EL_RE(self.input, self.i)
@@ -65,24 +73,27 @@ class Tokenizer:
         return ValueError(msg)
 
 
-
 def parse(s):
+    """
+    Move through the input, flatten hydration or salts,
+    and send to get parsed further
+    """
     global t, ttype, tvalue
-    #trim all spaces
-    s = s.replace(" ","")
-    #split at any * and attach at the end as brackets(). Only ints allowed
+    # trim all spaces
+    s = s.replace(" ", "")
+    # split at any * and attach at the end as brackets(). Only ints allowed
     ssplit = s.split('*')
-    for i in range(1, len(ssplit)): #Avoid the first (molecule) item
+    for i in range(1, len(ssplit)):  # Avoid the first (molecule) item
         if ssplit[i] == "":
             raise ValueError
-        char=0
+        char = 0
         prefix = ""
-        while ssplit[i][char:char+1].isdigit():
+        while ssplit[i][char:char+1].isdigit() or ssplit[i][char:char+1] == ".":
             prefix = prefix + ssplit[i][char:char+1]
             char = char + 1
         ssplit[i] = "({0}){1}".format(ssplit[i][char:], prefix)
     s = ''.join(ssplit)
-    
+
     t = Tokenizer(s)
     t.gettoken()
     seq = parse_sequence()
@@ -91,7 +102,9 @@ def parse(s):
         raise error
     return seq
 
+
 def parse_sequence():
+    """Parse the flattened formula"""
     global t, ttype, tvalue
     seq = ElementSequence()
     error = ""
@@ -106,8 +119,8 @@ def parse_sequence():
             t.gettoken()
         else:
             assert ttype == NAME
-            if sym2elt.has_key(tvalue):
-                thisguy = ElementSequence(sym2elt[tvalue])
+            if tvalue in ELEMENTS:
+                thisguy = ElementSequence(ELEMENTS[tvalue])
             else:
                 error = t.error("'" + tvalue + "' is not an element symbol")
                 raise error

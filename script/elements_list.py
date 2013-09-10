@@ -109,7 +109,9 @@ _data = r"""'Ac', 'Actinium', 89, 227
 'Zn', 'Zinc', 30, 65.38
 'Zr', 'Zirconium', 40, 91.22"""
 
+
 class Element:
+    """Each element is an object"""
     def __init__(self, symbol, name, atomicnumber, molweight):
         self.sym = symbol
         self.name = name
@@ -119,11 +121,14 @@ class Element:
     def addsyms(self, weight, result):
         result[self.sym] = result.get(self.sym, 0) + weight
 
+
 def build_dict(s):
+    """Make the element list into a dictionary"""
     answer = {}
     for line in string.split(s, "\n"):
         symbol, name, num, weight = eval(line)
         answer[symbol] = Element(symbol, name, num, weight)
     return answer
+
 
 ELEMENTS = build_dict(_data)
