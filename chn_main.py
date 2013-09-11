@@ -279,6 +279,13 @@ class IsotopeHandler(Handler):
                            "element_symbol": element_symbols}
         self.render_page(template_values)
 
+
+class IsotopeHelpHandler(Handler):
+    """Simple Isotope Help Handler"""
+    def get(self):
+        self.render("isotopehelp.html")
+
+
 class EaMainPage(Handler):
     """Main page. Handles form POST, and flagged returns (errors, etc.)"""
     def render_front(self, template_values):
@@ -456,6 +463,7 @@ app = webapp2.WSGIApplication([('/ea/?', EaMainPage),
                                ('/about/?', AboutHandler),
                                ('/contact/?', ContactHandler),
                                ('/isotopes/?', IsotopeHandler),
+                               ('/isotopes/help/?', IsotopeHelpHandler),
                                ('/?', HomeHandler)
                                ], debug=True)
 

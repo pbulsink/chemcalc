@@ -3,7 +3,7 @@
 <html>
   
   <head>
-    <title>Table of the Isotopes - ChemCalculator</title>
+    <title>EA Help - ChemCalculator</title>
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootswatch/3.0.0/flatly/bootstrap.min.css">
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -16,13 +16,6 @@
       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
       ga('create', 'UA-43106562-1', 'chn-solvent.appspot.com');
       ga('send', 'pageview');
-    </script>
-    <script language="javascript">
-      function m_generate (u, post) {
-        pre = "mail";
-        url = pre + "to:" + u;
-        document.location.href = url + "@gmail.com" + post;
-      }
     </script>
   </head>
   
@@ -54,63 +47,15 @@
     </header>
     <div class="container">
       <div class="well">
-        <p><h2>Table of Masses:</h2></p>
-        <p>Isotopic masses are provided for all stable isotopes.</p>
+        <div>
+      <p><h2>Instructions:</h2></p>
+      <p>The table of isotopes contains exact masses and abundances for all of the stable isotopes in the periodic table.</p>
+      <p>Updated as new information comes out, it contains information directly from the <a href="http://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl">NIST</a> database.</p>
+      <p>To view only a single element's isotopes, select it either by name or symbol in the dropdown list at the top. To return to the full list, select "All Elements".</p>
+      <p><a href="/isotopes" class="btn btn-primary">Back to Table</a></p>
+    </div>
       </div>
-      <form method="get" action="/isotopes">
-        <div class="container">
-          <div class="row">
-            <div class="col-xs-3">
-              <label class="form-label"><h5>Select Element by Name or Symbol:</h5></label>
-            </div>
-            <div class="col-xs-3">
-              <select class="form-control" name="e">
-                {% for e in element_symbol %}
-                <option value="{{e[1]}}">{{e[0]}}</option>
-                {% endfor %}
-              </select>
-            </div>
-            <div class="col-xs-3">
-              <select class="form-control" name="f">
-                {% for e in element_name %}
-                <option value="{{e[1]}}">{{e[0]}}</option>
-                {% endfor %}
-              </select>
-            </div>
-            <div class="col-xs-2">
-              <button class="btn btn-primary" type="submit">Select Element</button>
-            </div>
-          </div>
-        </div>
-      </form>
-      <br>
-      <table class="table table-bordered table-striped">
-        <thead>
-          <tr>
-            <th>Element</th>
-            <th>Symbol</th>
-            <th>Isotope</th>
-            <th>Mass</th>
-            <th>Abundance</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for e in elements %}
-          <tr>  
-            <td>{{e[0]}}</td>
-            <td>{{e[1]}}</td>
-            <td>{{'%0.0f' % e[3][0]}}</td>
-            <td>{{'%f' % e[3][1]}}</td>
-            <td>{{'%s' % e[3][2]}}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      <div class="well">
-        <p>*Abundances may not add up to 100.00 due to rounding or other factors.</p>
-        <p>Informaion from <a href="http://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl">NIST's</a> database of isotopes.</p>
-        <p>Help can be found <a href="/isotopes/help">here</a>.</p>
-      </div>
+      <div class="row"></div>
       <hr>
     </div>
     <footer>
