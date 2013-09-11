@@ -7,6 +7,7 @@ from ast import literal_eval
 from script.parse import parse  # Import the parser
 from script.solvent_correct import get_ea, solvent_calculate  # Import the calculator
 from script.secret import secret  # Keep the secret from the open source files.
+from script.elements_list import ELEMENTS
 
 # from google.appengine.ext import db
 
@@ -221,22 +222,68 @@ class ContactHandler(Handler):
         self.render("contact.html")
 
 
-class MainRedirectHandler(Handler):
-    """Some link isn't fixed to /ea/. Post a log then redirect"""
+class HomeHandler(Handler):
+    """Homepage"""
     def get(self):
-        r = self.request.get('r')
-        sub = ""
-        if r:
-            sub = "/?r=%s" % r
-        logging.error("Request to main /. With error: %s." % sub)
-        self.redirect('/ea%s' % sub)
+        self.render("home.html")
 
+
+class IsotopeHandler(Handler):
+    """Prep and draw Isotope Page"""
+    def render_page(self, template_values):
+        """Draw the front page, filling fields if supplied"""
+        self.render("mass_table.html", **template_values)
+
+    def get(self):
+        e = self.request.get('e')
+        f = self.request.get('f')
+        # Have to decide some way to handle mixed input. Do both!
+        isotopes = list ()
+        selected_elements = False
+        if e in ELEMENTS:
+            selected_elements = True
+            if ELEMENTS[e].has_isotopes:
+                for i in ELEMENTS[e].isotopes:
+                    isotopes.append([ELEMENTS[e].name, ELEMENTS[e].sym,
+                                     ELEMENTS[e].ano, i])
+        if f in ELEMENTS:
+            selected_elements = True
+            if ELEMENTS[f].has_isotopes:
+                for i in ELEMENTS[f].isotopes:
+                    isotopes.append([ELEMENTS[f].name, ELEMENTS[f].sym,
+                                     ELEMENTS[f].ano, i])
+        if not selected_elements:
+            elements = ELEMENTS
+            for key in ELEMENTS:
+                if ELEMENTS[key].has_isotopes:
+                    for i in ELEMENTS[key].isotopes:
+                        isotopes.append([ELEMENTS[key].name, ELEMENTS[key].sym,
+                                         ELEMENTS[key].ano, i])
+        
+        element_symbols = list()
+        element_names = list()
+        for key in ELEMENTS:
+            if ELEMENTS[key].has_isotopes:
+                element_names.append([ELEMENTS[key].name, key])
+                element_symbols.append([key, key])
+        element_names.sort()
+        element_symbols.sort()
+        element_names.insert(0, ["All Elements", ""])
+        element_symbols.insert(0, ["All Elements", ""])
+        print isotopes
+        isotopes = sorted(isotopes,
+                          key=lambda isotopes: (isotopes[2], isotopes[3][0]))
+        print "after"
+        print isotopes
+        template_values = {"elements": isotopes, "element_name": element_names,
+                           "element_symbol": element_symbols}
+        self.render_page(template_values)
 
 class EaMainPage(Handler):
     """Main page. Handles form POST, and flagged returns (errors, etc.)"""
     def render_front(self, template_values):
         """Draw the front page, filling fields if supplied"""
-        self.render("submit-form.html", **template_values)
+        self.render("eaform.html", **template_values)
 
     def get(self):
         """Prep the front page for rendering"""
@@ -408,5 +455,7 @@ app = webapp2.WSGIApplication([('/ea/?', EaMainPage),
                                ('/ea/help/?', EaHelpHandler),
                                ('/about/?', AboutHandler),
                                ('/contact/?', ContactHandler),
-                               ('/', MainRedirectHandler)
+                               ('/isotopes/?', IsotopeHandler),
+                               ('/?', HomeHandler)
                                ], debug=True)
+

@@ -3,7 +3,7 @@
 <html>
   
   <head>
-    <title>About - ChemCalculator</title>
+    <title>Home - ChemCalculator</title>
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootswatch/3.0.0/flatly/bootstrap.min.css">
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -31,7 +31,7 @@
           </div>
           <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-              <li>
+              <li class="active">
                 <a href="/">Home</a>
               </li>
               <li>
@@ -45,41 +45,31 @@
         </div>
       </div>
     </header>
-    <div class="container">
-      <div class="well">
-        <div>
-      <p><h2>About Us:</h2></p>
-      <p>This is a chemistry calculation website, with a number of different calculations available or planned.
-      So far available:</p>
-      <ul>
-        <li><a href="/ea">Elemental Analysis Calculator and Solvent Corrector</a></li>
-        <li><a href="/isotopes">Table of the Isotopes</a></li>
-      </ul>
-      <p>Planned, in development, or in testing:</p>
-      <ul>
-        <li>Mass Spec fragment mass resolver</li>
-        <li>Formula Balancer</li>
-        <li>Mol - Mass Conversion</li>
-      </ul>
-      <p>This is an open source project. Code can be seen at <a href="https://github.com/pbulsink/chemcalc">Github</a>.</p>
-      <p> 
-        Copyright (C) 2013 Philip Bulsink<br>
-        This program is free software: you can redistribute it and/or modify
-        it under the terms of the GNU General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at our option) any later version.<br>
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU General Public License for more details.
-      </p>
-
-      <p><a href="/" class="btn btn-primary">Back to Home</a></p>
-    </div>
+    <div class="jumbotron">
+      <div class="container">
+        <h1>ChemCalculator</h1>
+        <p>Need help with some of those guess and test chemistry problems? Want a quicker way of getting through your results? See if any of the tools on this site can help you with that!</p>
       </div>
-      <div class="row"></div>
-      <hr>
     </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4">
+          <h2>Elemental Analysis</h2>
+          <p>Calculate the percent composition of your compound, or find how much of selected solvents are needed to bring experimental values in line with actual composition.</p>
+          <p><a class="btn btn-primary" href="/ea">Elemental Analysis &raquo;</a></p>
+        </div>
+        <div class="col-lg-4">
+          <h2>Table of the Isotopes</h2>
+          <p>A table of the isotopes, easily simplified to show only the element you're looking for. All data comes from the NIST database.</p>
+          <p><a class="btn btn-primary" href="/isotopes">Table of Isotopes &raquo;</a></p>
+        </div>
+        <div class="col-lg-4">
+          <h2>More Information</h2>
+          <p>Get information on this website and see what else is in the works</p>
+          <p><a class="btn btn-primary" href="/about">Information &raquo;</a></p>
+        </div>
+      </div>
+    <hr>
     <footer>
       <div class="container">
         <p><a href="/about">About</a> &bull; <a href="/contact">Contact</a> &bull; &copy; 2013 Philip Bulsink</p>

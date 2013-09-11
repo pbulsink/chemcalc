@@ -155,7 +155,3 @@ def build_dict(s):
 
 
 ELEMENTS = build_dict(_data)
-
-for key in ELEMENTS:
-    print ELEMENTS[key].sym
-    print ELEMENTS[key].isotopes

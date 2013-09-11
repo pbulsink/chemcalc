@@ -3,7 +3,7 @@
 <html>
   
   <head>
-    <title>About - ChemCalculator</title>
+    <title>Table of the Isotopes - ChemCalculator</title>
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootswatch/3.0.0/flatly/bootstrap.min.css">
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -16,6 +16,13 @@
       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
       ga('create', 'UA-43106562-1', 'chn-solvent.appspot.com');
       ga('send', 'pageview');
+    </script>
+    <script language="javascript">
+      function m_generate (u, post) {
+        pre = "mail";
+        url = pre + "to:" + u;
+        document.location.href = url + "@gmail.com" + post;
+      }
     </script>
   </head>
   
@@ -37,7 +44,7 @@
               <li>
                 <a href="/ea">Elemental Analysis</a>
               </li>
-              <li>
+              <li class="active">
                 <a href="/isotopes">Table of Isotopes</a>
               </li>
             </ul>
@@ -47,37 +54,60 @@
     </header>
     <div class="container">
       <div class="well">
-        <div>
-      <p><h2>About Us:</h2></p>
-      <p>This is a chemistry calculation website, with a number of different calculations available or planned.
-      So far available:</p>
-      <ul>
-        <li><a href="/ea">Elemental Analysis Calculator and Solvent Corrector</a></li>
-        <li><a href="/isotopes">Table of the Isotopes</a></li>
-      </ul>
-      <p>Planned, in development, or in testing:</p>
-      <ul>
-        <li>Mass Spec fragment mass resolver</li>
-        <li>Formula Balancer</li>
-        <li>Mol - Mass Conversion</li>
-      </ul>
-      <p>This is an open source project. Code can be seen at <a href="https://github.com/pbulsink/chemcalc">Github</a>.</p>
-      <p> 
-        Copyright (C) 2013 Philip Bulsink<br>
-        This program is free software: you can redistribute it and/or modify
-        it under the terms of the GNU General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at our option) any later version.<br>
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU General Public License for more details.
-      </p>
-
-      <p><a href="/" class="btn btn-primary">Back to Home</a></p>
-    </div>
+        <p><h2>Table of Masses:</h2></p>
+        <p>Isotopic masses are provided for all stable isotopes.</p>
       </div>
+      <form method="get" action="/isotopes">
+        <div class="container">
+          <div class="row">
+            <div class="col-xs-3">
+              <label class="form-label">Select Element by Name or Symbol:</label>
+            </div>
+            <div class="col-xs-3">
+              <select class="form-control" name="e">
+                {% for e in element_symbol %}
+                <option value="{{e[1]}}">{{e[0]}}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-xs-3">
+              <select class="form-control" name="f">
+                {% for e in element_name %}
+                <option value="{{e[1]}}">{{e[0]}}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-xs-2">
+              <input type="submit">
+            </div>
+          </div>
+        </div>
+      </form>
       <div class="row"></div>
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Element</th>
+            <th>Symbol</th>
+            <th>Isotope</th>
+            <th>Mass</th>
+            <th>Abundance</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in elements %}
+          <tr>  
+            <td>{{e[0]}}</td>
+            <td>{{e[1]}}</td>
+            <td>{{'%0.0f' % e[3][0]}}</td>
+            <td>{{'%f' % e[3][1]}}</td>
+            <td>{{'%s' % e[3][2]}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <p>*Abundances may not add up to 100.00 due to rounding or other factors.</p>
+      <p>Informaion from <a href="http://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl">NIST's</a> database of isotopes.</p>
       <hr>
     </div>
     <footer>
