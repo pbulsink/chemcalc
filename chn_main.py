@@ -69,9 +69,9 @@ def render_results(results, exp, solvent, formula):
     rexp = list(list())
     ulexp = list(list())
     sresult = list(list())
-    diff = ""
+    rendered_results['diff'] = ""
     rendered_results['result_formula'] = ""  # formula
-    rtype = "ea"
+    rendered_results['rtype'] = "ea"
     rendered_results['mmass'] = results[2]
 
     # C and H go first in list
@@ -100,7 +100,7 @@ def render_results(results, exp, solvent, formula):
 
     if results[0] != "ea":
         # Full calculation. Change rtype, process more.
-        rtype = "calc"
+        rendered_results['rtype'] = "calc"
         sresult = results[3]
         cresult = results[4]
         # Aligning with C and H
@@ -122,7 +122,7 @@ def render_results(results, exp, solvent, formula):
                 r.append(float(r[3] - float(r[1])))
             except:
                 logging.exception("error ln 116 %s, %s" % (str(r[0]), str(rexp)))
-        diff = results[5]
+        rendered_results['diff'] = results[5]
         # result_formula = formula + '*'
         # eventual printing out of formula * solvents.
         # requires dictionary or modified solvent_correct.
@@ -131,10 +131,8 @@ def render_results(results, exp, solvent, formula):
         #    result_formula = result_formula + ("%0.2f" % s[1]) + s[3]
 
     # Build rendered_results from components.
-    rendered_results['rtype'] = rtype
     rendered_results['exp'] = rexp
     rendered_results['solvent'] = sresult
-    rendered_results['diff'] = diff
     return rendered_results
 
 
@@ -164,6 +162,18 @@ class Handler(webapp2.RequestHandler):
             self.redirect('/ea/?r=%s' % exception)
         else:
             self.redirect('/ea/?r=e')
+
+
+class AboutHandler(Handler):
+    """Simple about-us handler"""
+    def get(self):
+        self.render("about.html")
+
+
+class ContactHandler(Handler):
+    """Simple Contact-Us handler"""
+    def get(self):
+        self.render("contact.html")
 
 
 class EaResultHandler(Handler):
@@ -204,86 +214,10 @@ class EaResultHandler(Handler):
         self.render('results.html', **template_values)
 
 
-class AboutHandler(Handler):
-    """Simple about-us handler"""
-    def get(self):
-        self.render("about.html")
-
-
 class EaHelpHandler(Handler):
     """Simple help handler"""
     def get(self):
         self.render("eahelp.html")
-
-
-class ContactHandler(Handler):
-    """Simple Contact-Us handler"""
-    def get(self):
-        self.render("contact.html")
-
-
-class HomeHandler(Handler):
-    """Homepage"""
-    def get(self):
-        self.render("home.html")
-
-
-class IsotopeHandler(Handler):
-    """Prep and draw Isotope Page"""
-    def render_page(self, template_values):
-        """Draw the front page, filling fields if supplied"""
-        self.render("mass_table.html", **template_values)
-
-    def get(self):
-        e = self.request.get('e')
-        f = self.request.get('f')
-        # Have to decide some way to handle mixed input. Do both!
-        isotopes = list ()
-        selected_elements = False
-        if e in ELEMENTS:
-            selected_elements = True
-            if ELEMENTS[e].has_isotopes:
-                for i in ELEMENTS[e].isotopes:
-                    isotopes.append([ELEMENTS[e].name, ELEMENTS[e].sym,
-                                     ELEMENTS[e].ano, i])
-        if f in ELEMENTS:
-            selected_elements = True
-            if ELEMENTS[f].has_isotopes:
-                for i in ELEMENTS[f].isotopes:
-                    isotopes.append([ELEMENTS[f].name, ELEMENTS[f].sym,
-                                     ELEMENTS[f].ano, i])
-        if not selected_elements:
-            elements = ELEMENTS
-            for key in ELEMENTS:
-                if ELEMENTS[key].has_isotopes:
-                    for i in ELEMENTS[key].isotopes:
-                        isotopes.append([ELEMENTS[key].name, ELEMENTS[key].sym,
-                                         ELEMENTS[key].ano, i])
-        
-        element_symbols = list()
-        element_names = list()
-        for key in ELEMENTS:
-            if ELEMENTS[key].has_isotopes:
-                element_names.append([ELEMENTS[key].name, key])
-                element_symbols.append([key, key])
-        element_names.sort()
-        element_symbols.sort()
-        element_names.insert(0, ["All Elements", ""])
-        element_symbols.insert(0, ["All Elements", ""])
-        print isotopes
-        isotopes = sorted(isotopes,
-                          key=lambda isotopes: (isotopes[2], isotopes[3][0]))
-        print "after"
-        print isotopes
-        template_values = {"elements": isotopes, "element_name": element_names,
-                           "element_symbol": element_symbols}
-        self.render_page(template_values)
-
-
-class IsotopeHelpHandler(Handler):
-    """Simple Isotope Help Handler"""
-    def get(self):
-        self.render("isotopehelp.html")
 
 
 class EaMainPage(Handler):
@@ -455,6 +389,70 @@ class EaMainPage(Handler):
             t_var['solvent_variables'] = s_var
             t_var['other_variables'] = o_var
             self.render_front(t_var)
+
+
+class HomeHandler(Handler):
+    """Homepage"""
+    def get(self):
+        self.render("home.html")
+
+
+class IsotopeHandler(Handler):
+    """Prep and draw Isotope Page"""
+    def render_page(self, template_values):
+        """Draw the front page, filling fields if supplied"""
+        self.render("mass_table.html", **template_values)
+
+    def get(self):
+        e = self.request.get('e')
+        f = self.request.get('f')
+        # Have to decide some way to handle mixed input. Do both!
+        isotopes = list ()
+        selected_elements = False
+        if e in ELEMENTS:
+            selected_elements = True
+            if ELEMENTS[e].has_isotopes:
+                for i in ELEMENTS[e].isotopes:
+                    isotopes.append([ELEMENTS[e].name, ELEMENTS[e].sym,
+                                     ELEMENTS[e].ano, i])
+        if f in ELEMENTS:
+            selected_elements = True
+            if ELEMENTS[f].has_isotopes:
+                for i in ELEMENTS[f].isotopes:
+                    isotopes.append([ELEMENTS[f].name, ELEMENTS[f].sym,
+                                     ELEMENTS[f].ano, i])
+        if not selected_elements:
+            elements = ELEMENTS
+            for key in ELEMENTS:
+                if ELEMENTS[key].has_isotopes:
+                    for i in ELEMENTS[key].isotopes:
+                        isotopes.append([ELEMENTS[key].name, ELEMENTS[key].sym,
+                                         ELEMENTS[key].ano, i])
+        
+        element_symbols = list()
+        element_names = list()
+        for key in ELEMENTS:
+            if ELEMENTS[key].has_isotopes:
+                element_names.append([ELEMENTS[key].name, key])
+                element_symbols.append([key, key])
+        element_names.sort()
+        element_symbols.sort()
+        element_names.insert(0, ["All Elements", ""])
+        element_symbols.insert(0, ["All Elements", ""])
+        print isotopes
+        isotopes = sorted(isotopes,
+                          key=lambda isotopes: (isotopes[2], isotopes[3][0]))
+        print "after"
+        print isotopes
+        template_values = {"elements": isotopes, "element_name": element_names,
+                           "element_symbol": element_symbols}
+        self.render_page(template_values)
+
+
+class IsotopeHelpHandler(Handler):
+    """Simple Isotope Help Handler"""
+    def get(self):
+        self.render("isotopehelp.html")
 
 
 app = webapp2.WSGIApplication([('/ea/?', EaMainPage),
