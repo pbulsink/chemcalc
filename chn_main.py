@@ -4,6 +4,7 @@ import jinja2
 import logging
 import hmac
 from ast import literal_eval
+from flask import Flask, render_template
 from script.parse import parse  # Import the parser
 from script.solvent_correct import get_ea, solvent_calculate  # Import the calculator
 from script.secret import secret  # Keep the secret from the open source files.
@@ -14,6 +15,8 @@ from script.elements_list import ELEMENTS
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
 JINJA_ENV = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
                                autoescape=True)
+
+app = Flask(__name__)
 
 
 def check_secure_val(secure_val):
@@ -136,47 +139,18 @@ def render_results(results, exp, solvent, formula):
     return rendered_results
 
 
-class Handler(webapp2.RequestHandler):
-    """Handler for webapp cuts repeats."""
-    def render(self, template, **kw):
-        self.response.out.write(self.render_str(template, **kw))
-
-    def render_str(self, template, **params):
-        t = JINJA_ENV.get_template(template)
-        return t.render(params)
-
-    def write(self, *a, **kw):
-        self.response.out.write(*a, **kw)
-
-    def handle_exception(self, exception, debug):
-        """Handle html exceptions"""
-        # Log the error.
-        logging.exception(exception)
-
-        # Set a custom message.
-        self.response.write('An error occurred.')
-
-        # If the exception is a HTTPException, use its error code.
-        # Otherwise use a generic 500 error code.
-        if isinstance(exception, webapp2.HTTPException):
-            self.redirect('/ea/?r=%s' % exception)
-        else:
-            self.redirect('/ea/?r=e')
-
-
-class AboutHandler(Handler):
+@app.route('/about')
+def AboutHandler():
     """Simple about-us handler"""
-    def get(self):
-        self.render("about.html")
+    return render_template("about.html")
 
-
-class ContactHandler(Handler):
+@app.route('/contact')
+def ContactHandler():
     """Simple Contact-Us handler"""
-    def get(self):
-        self.render("contact.html")
+    return render_template("contact.html")
 
-
-class EaResultHandler(Handler):
+@app.route('/ea/results')
+def EaResultHandler():
     """Requests calculation, rendering, draw results"""
     def get(self):
         solvent = list()
@@ -211,16 +185,17 @@ class EaResultHandler(Handler):
                            'diff': rendered_results['diff'],
                            'result_formula': rendered_results['result_formula'],
                            'mmass': rendered_results['mmass']}
-        self.render('results.html', **template_values)
+        return render_template('results.html', **template_values)
 
 
-class EaHelpHandler(Handler):
+@app.route('/ea/help')
+def EaHelpHandler():
     """Simple help handler"""
-    def get(self):
-        self.render("eahelp.html")
+    return render_template("eahelp.html")
 
 
-class EaMainPage(Handler):
+@app.route('/ea')
+def EaMainPage():
     """Main page. Handles form POST, and flagged returns (errors, etc.)"""
     def render_front(self, template_values):
         """Draw the front page, filling fields if supplied"""
@@ -391,77 +366,76 @@ class EaMainPage(Handler):
             self.render_front(t_var)
 
 
-class HomeHandler(Handler):
+@app.route('/')
+def HomeHandler():
     """Homepage"""
-    def get(self):
-        self.render("home.html")
+    return render_template("home.html")
 
 
-class IsotopeHandler(Handler):
-    """Prep and draw Isotope Page"""
-    def render_page(self, template_values):
-        """Draw the front page, filling fields if supplied"""
-        self.render("mass_table.html", **template_values)
-
-    def get(self):
-        e = self.request.get('e')
-        f = self.request.get('f')
-        # Have to decide some way to handle mixed input. Do both!
-        isotopes = list ()
-        selected_elements = False
-        if e in ELEMENTS:
-            selected_elements = True
-            if ELEMENTS[e].has_isotopes:
-                for i in ELEMENTS[e].isotopes:
-                    isotopes.append([ELEMENTS[e].name, ELEMENTS[e].sym,
-                                     ELEMENTS[e].ano, i])
-        if f in ELEMENTS:
-            selected_elements = True
-            if ELEMENTS[f].has_isotopes:
-                for i in ELEMENTS[f].isotopes:
-                    isotopes.append([ELEMENTS[f].name, ELEMENTS[f].sym,
-                                     ELEMENTS[f].ano, i])
-        if not selected_elements:
-            elements = ELEMENTS
-            for key in ELEMENTS:
-                if ELEMENTS[key].has_isotopes:
-                    for i in ELEMENTS[key].isotopes:
-                        isotopes.append([ELEMENTS[key].name, ELEMENTS[key].sym,
-                                         ELEMENTS[key].ano, i])
+@app.route('/isotopes/<relement>')
+@app.route('/isotopes')
+def IsotopeHandler(relement=none):
+    e = request.args.get('e')
+    f = request.args.get('f')
+    # Have to decide some way to handle mixed input. Do both!
+    isotopes = list ()
+    selected_elements = False
+    if relement in ELEMENTS:
+        return redirect('/isotopes?e=%s' % relement)
         
-        element_symbols = list()
-        element_names = list()
+    if e in ELEMENTS:
+        selected_elements = True
+        if ELEMENTS[e].has_isotopes:
+            for i in ELEMENTS[e].isotopes:
+                isotopes.append([ELEMENTS[e].name, ELEMENTS[e].sym,
+                                 ELEMENTS[e].ano, i])
+    if f in ELEMENTS:
+        selected_elements = True
+        if ELEMENTS[f].has_isotopes:
+            for i in ELEMENTS[f].isotopes:
+                isotopes.append([ELEMENTS[f].name, ELEMENTS[f].sym,
+                                 ELEMENTS[f].ano, i])
+    if not selected_elements:
+        elements = ELEMENTS
         for key in ELEMENTS:
             if ELEMENTS[key].has_isotopes:
-                element_names.append([ELEMENTS[key].name, key])
-                element_symbols.append([key, key])
-        element_names.sort()
-        element_symbols.sort()
-        element_names.insert(0, ["All Elements", ""])
-        element_symbols.insert(0, ["All Elements", ""])
-        print isotopes
-        isotopes = sorted(isotopes,
-                          key=lambda isotopes: (isotopes[2], isotopes[3][0]))
-        print "after"
-        print isotopes
-        template_values = {"elements": isotopes, "element_name": element_names,
-                           "element_symbol": element_symbols}
-        self.render_page(template_values)
+                for i in ELEMENTS[key].isotopes:
+                    isotopes.append([ELEMENTS[key].name, ELEMENTS[key].sym,
+                                     ELEMENTS[key].ano, i])
+    
+    element_symbols = list()
+    element_names = list()
+    for key in ELEMENTS:
+        if ELEMENTS[key].has_isotopes:
+            element_names.append([ELEMENTS[key].name, key])
+            element_symbols.append([key, key])
+    element_names.sort()
+    element_symbols.sort()
+    element_names.insert(0, ["All Elements", ""])
+    element_symbols.insert(0, ["All Elements", ""])
+    print isotopes
+    isotopes = sorted(isotopes,
+                      key=lambda isotopes: (isotopes[2], isotopes[3][0]))
+    print "after"
+    print isotopes
+    template_values = {"elements": isotopes, "element_name": element_names,
+                       "element_symbol": element_symbols}
+    return render_template("mass_table.html", **template_values)
 
 
-class IsotopeHelpHandler(Handler):
+@app.route('/isotopes/help')
+def IsotopeHelpHandler():
     """Simple Isotope Help Handler"""
-    def get(self):
-        self.render("isotopehelp.html")
+    return render_template("isotopehelp.html")
 
 
-app = webapp2.WSGIApplication([('/ea/?', EaMainPage),
-                               ('/ea/results/?', EaResultHandler),
-                               ('/ea/help/?', EaHelpHandler),
-                               ('/about/?', AboutHandler),
-                               ('/contact/?', ContactHandler),
-                               ('/isotopes/?', IsotopeHandler),
-                               ('/isotopes/help/?', IsotopeHelpHandler),
-                               ('/?', HomeHandler)
-                               ], debug=True)
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
+@app.errorhandler(500)
+def server_error(e):
+    return render_template('500.html'), 500
+
+if __name__ == "__main__":
+    app.run()
