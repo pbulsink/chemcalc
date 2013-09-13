@@ -2,9 +2,10 @@ import os
 import webapp2
 import jinja2
 import logging
+from logging.handlers import RotatingFileHandler
 import hmac
 from ast import literal_eval
-from flask import Flask, render_template
+from flask import Flask, render_template, request, make_response, redirect, url_for
 from script.parse import parse  # Import the parser
 from script.solvent_correct import get_ea, solvent_calculate  # Import the calculator
 from script.secret import secret  # Keep the secret from the open source files.
@@ -15,7 +16,16 @@ JINJA_ENV = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
                                autoescape=True)
 
 app = Flask(__name__)
+app.debug = True
 
+if not app.debug:
+    file_handler = RotatingFileHandler('warning.log', 'a', 1 * 1024 * 1024, 10)
+    file_handler.setLevel(logging.WARNING)
+else:
+    file_handler = RotatingFileHandler('debug.log', 'a', 1 * 1024 * 1024, 10)
+    file_handler.setLevel(logging.WARNING)
+    
+app.logger.addHandler(file_handler)
 
 def check_secure_val(secure_val):
     """Verify value is unmodified, and return it"""
@@ -150,6 +160,7 @@ def ContactHandler():
 @app.route('/ea/results')
 def EaResultHandler():
     """Requests calculation, rendering, draw results"""
+    print "ea start"
     solvent = list()
     exp = dict()
     formula = check_secure_val(request.cookies.get('f'))
@@ -174,6 +185,8 @@ def EaResultHandler():
     else:
         results = solvent_calculate(fparsed, solvent, exp)
     rendered_results = render_results(results, exp, solvent, formula)
+    print "ea end"
+    print rendered_results
 
     template_values = {'formula': formula,
                        'rtype': rendered_results['rtype'],
@@ -182,7 +195,15 @@ def EaResultHandler():
                        'diff': rendered_results['diff'],
                        'result_formula': rendered_results['result_formula'],
                        'mmass': rendered_results['mmass']}
-    return render_template('results.html', **template_values)
+    return render_template("results.html", **template_values)
+                       #    formula=formula,
+                       #    rtype = rendered_results['rtype'],
+                       #    exp = rendered_results['exp'],
+                       #    solvent = rendered_results['solvent'],
+                       #    diff = rendered_results['diff'],
+                       #    result_formula = rendered_results['result_formula'],
+                       #    mmass = rendered_results['mmass']
+                       #)
 
 
 @app.route('/ea/help')
@@ -227,9 +248,9 @@ def EaMainPage():
                  "other_variables": o_var}
         solvents = []
 
-        resp = make_response(render_template("results.html"))
+        resp = make_response(redirect('ea/results'))
 
-        sget = request.form("solvent")
+        sget = request.form.getlist("solvent")
         for s in sget:
             name = ""
             for i in s_var:
@@ -238,13 +259,13 @@ def EaMainPage():
                     i[1][1] = True
             solvents.append([name, str(s)])
         for o in o_var:
-            d = str(request.form(o[1]))
+            d = str(request.form.get(o[1]))
             if d != "":
                 valid, error = parse_formula(d, error)
                 if valid:
                     solvents.append(["", d])
                     o[0] = d
-        formula = request.form("formula")
+        formula = request.form.get("formula")
         if not formula:
             error = error + "You need to enter a formula. "
         else:
@@ -252,7 +273,7 @@ def EaMainPage():
 
         exp = False
         for e in e_var:
-            e[2] = str(request.form(e[1]))
+            e[2] = str(request.form.get(e[1]))
             if not is_floatable(e[2]) and e[2] != "":
                 error = error + "Not a number error for Experimental %s. " % e[0]
             elif e[2] != '':
@@ -293,6 +314,7 @@ def EaMainPage():
             t_var['solvent_variables'] = s_var
             t_var['other_variables'] = o_var
             resp = make_response(render_template("eaform.html", **t_var))
+            print "Go To EA"
             return resp
 
     else:  # GET
@@ -373,7 +395,7 @@ def HomeHandler():
 
 @app.route('/isotopes/<relement>')
 @app.route('/isotopes')
-def IsotopeHandler(relement=none):
+def IsotopeHandler(relement=None):
     e = request.args.get('e')
     f = request.args.get('f')
     # Have to decide some way to handle mixed input. Do both!
@@ -412,11 +434,8 @@ def IsotopeHandler(relement=none):
     element_symbols.sort()
     element_names.insert(0, ["All Elements", ""])
     element_symbols.insert(0, ["All Elements", ""])
-    print isotopes
     isotopes = sorted(isotopes,
                       key=lambda isotopes: (isotopes[2], isotopes[3][0]))
-    print "after"
-    print isotopes
     template_values = {"elements": isotopes, "element_name": element_names,
                        "element_symbol": element_symbols}
     return render_template("mass_table.html", **template_values)
@@ -431,14 +450,17 @@ def IsotopeHelpHandler():
 @app.errorhandler(404)
 def page_not_found(e):
     """Simple 404 error handler"""
+    app.logger.info(e)
     return render_template('404.html'), 404
 
 
-@app.errorhandler(500)
-def server_error(e):
-    """Simple 500 error handler"""
-    return render_template('500.html'), 500
+#@app.errorhandler(500)
+#def server_error(e):
+#    """Simple 500 error handler"""
+#    app.logger.error(e)
+#    return render_template('500.html', e=e), 500
 
 
 if __name__ == "__main__":
+    app.debug = True
     app.run()

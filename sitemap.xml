@@ -4,9 +4,9 @@
 
    <url>
 
-      <loc>http://chn-solvent.appspot.com/</loc>
+      <loc>http://chemcalculator.com/</loc>
 
-      <lastmod>2013-09-11</lastmod>
+      <lastmod>2013-09-13</lastmod>
 
       <changefreq>weekly</changefreq>
 
@@ -16,9 +16,9 @@
 
    <url>
 
-      <loc>http://chn-solvent.appspot.com/ea</loc>
+      <loc>http://chemcalculator.com/ea</loc>
 
-      <lastmod>2013-09-09</lastmod>
+      <lastmod>2013-09-13</lastmod>
 
       <changefreq>weekly</changefreq>
 
@@ -28,9 +28,9 @@
 
    <url>
 
-      <loc>http://chn-solvent.appspot.com/about</loc>
+      <loc>http://chemcalculator.com/about</loc>
 
-      <lastmod>2013-09-09</lastmod>
+      <lastmod>2013-09-13</lastmod>
 
       <changefreq>weekly</changefreq>
 
@@ -40,21 +40,9 @@
 
    <url>
 
-      <loc>http://chn-solvent.appspot.com/contact</loc>
+      <loc>http://chemcalculator.com/contact</loc>
 
-      <lastmod>2013-09-09</lastmod>
-
-      <changefreq>weekly</changefreq>
-
-      <priority>0.4</priority>
-
-   </url>
-
-   <url>
-
-      <loc>http://chn-solvent.appspot.com/ea/help</loc>
-
-      <lastmod>2013-09-11</lastmod>
+      <lastmod>2013-09-13</lastmod>
 
       <changefreq>weekly</changefreq>
 
@@ -64,9 +52,21 @@
 
    <url>
 
-      <loc>http://chn-solvent.appspot.com/isotopes</loc>
+      <loc>http://chemcalculator.com/ea/help</loc>
 
-      <lastmod>2013-09-11</lastmod>
+      <lastmod>2013-09-13</lastmod>
+
+      <changefreq>weekly</changefreq>
+
+      <priority>0.4</priority>
+
+   </url>
+
+   <url>
+
+      <loc>http://chemcalculator.com/isotopes</loc>
+
+      <lastmod>2013-09-13</lastmod>
 
       <changefreq>weekly</changefreq>
 
@@ -76,9 +76,9 @@
 
    <url>
 
-      <loc>http://chn-solvent.appspot.com/isotopes/help</loc>
+      <loc>http://chemcalculator.com/isotopes/help</loc>
 
-      <lastmod>2013-09-11</lastmod>
+      <lastmod>2013-09-13</lastmod>
 
       <changefreq>weekly</changefreq>
 
