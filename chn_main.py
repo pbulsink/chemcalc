@@ -10,8 +10,6 @@ from script.solvent_correct import get_ea, solvent_calculate  # Import the calcu
 from script.secret import secret  # Keep the secret from the open source files.
 from script.elements_list import ELEMENTS
 
-# from google.appengine.ext import db
-
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
 JINJA_ENV = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
                                autoescape=True)
@@ -31,9 +29,7 @@ def check_secure_val(secure_val):
 
 
 def is_floatable(s):
-    """
-    Return true/false if string is float number
-    """
+    """Return true/false if string is float number"""
     try:
         float(s)
         return True
@@ -144,48 +140,49 @@ def AboutHandler():
     """Simple about-us handler"""
     return render_template("about.html")
 
+
 @app.route('/contact')
 def ContactHandler():
     """Simple Contact-Us handler"""
     return render_template("contact.html")
 
+
 @app.route('/ea/results')
 def EaResultHandler():
     """Requests calculation, rendering, draw results"""
-    def get(self):
-        solvent = list()
-        exp = dict()
-        formula = check_secure_val(self.request.cookies.get('f'))
-        if not formula:
-            self.redirect('/ea/?r=ecf')
-        fparsed, e = parse_formula(formula, "")
-        s = check_secure_val(self.request.cookies.get('s'))
-        if s:
-            solvent = literal_eval(s)
-        elif s is None:
-            self.redirect('/ea/r=ecs')
-        e = check_secure_val(self.request.cookies.get('e'))
-        if e:
-            exp = dict(literal_eval(e))
-        elif e is None:
-            self.redirect('/ea/?r=ece')
+    solvent = list()
+    exp = dict()
+    formula = check_secure_val(request.cookies.get('f'))
+    if not formula:
+        return redirect('/ea/?r=ecf')
+    fparsed, e = parse_formula(formula, "")
+    s = check_secure_val(request.cookies.get('s'))
+    if s:
+        solvent = literal_eval(s)
+    elif s is None:
+        return redirect('/ea/r=ecs')
+    e = check_secure_val(request.cookies.get('e'))
+    if e:
+        exp = dict(literal_eval(e))
+    elif e is None:
+        return redirect('/ea/?r=ece')
 
-        if formula == "":
-            self.redirect('/ea/?r=nf')
-        elif solvent == []:
-            results = get_ea(fparsed)
-        else:
-            results = solvent_calculate(fparsed, solvent, exp)
-        rendered_results = render_results(results, exp, solvent, formula)
+    if formula == "":
+        return redirect('/ea/?r=nf')
+    elif solvent == []:
+        results = get_ea(fparsed)
+    else:
+        results = solvent_calculate(fparsed, solvent, exp)
+    rendered_results = render_results(results, exp, solvent, formula)
 
-        template_values = {'formula': formula,
-                           'rtype': rendered_results['rtype'],
-                           'exp': rendered_results['exp'],
-                           'solvent': rendered_results['solvent'],
-                           'diff': rendered_results['diff'],
-                           'result_formula': rendered_results['result_formula'],
-                           'mmass': rendered_results['mmass']}
-        return render_template('results.html', **template_values)
+    template_values = {'formula': formula,
+                       'rtype': rendered_results['rtype'],
+                       'exp': rendered_results['exp'],
+                       'solvent': rendered_results['solvent'],
+                       'diff': rendered_results['diff'],
+                       'result_formula': rendered_results['result_formula'],
+                       'mmass': rendered_results['mmass']}
+    return render_template('results.html', **template_values)
 
 
 @app.route('/ea/help')
@@ -194,82 +191,11 @@ def EaHelpHandler():
     return render_template("eahelp.html")
 
 
-@app.route('/ea')
+@app.route('/ea', methods=['POST', 'GET'])
 def EaMainPage():
     """Main page. Handles form POST, and flagged returns (errors, etc.)"""
-    def render_front(self, template_values):
-        """Draw the front page, filling fields if supplied"""
-        self.render("eaform.html", **template_values)
 
-    def get(self):
-        """Prep the front page for rendering"""
-        other_variables = [["", "other1"],
-                           ["", "other2"],
-                           ["", "other3"]]
-        e_var = [["C", "exp_c", ""],
-                 ["H", "exp_h", ""],
-                 ["N", "exp_n", ""],
-                 ["O", "exp_o", ""],
-                 ["S", "exp_s", ""],
-                 ["P", "exp_p", ""],
-                 ["F", "exp_f", ""],
-                 ["Cl", "exp_cl", ""],
-                 ["Br", "exp_br", ""],
-                 ["I", "exp_i", ""]]
-        solvent_list = [["H2O", ["Water", False]],
-                        ["CH2Cl2", ["Methylene Chloride", False]],
-                        ["CHCl3", ["Chloroform", False]],
-                        ["CH3COH", ["Acetone", False]],
-                        ["CH3CN", ["Acetonitrile", False]],
-                        ["C7H8", ["Toluene", False]],
-                        ["CH3OH", ["Methanol", False]],
-                        ["CH3COH3", ["Ethanol", False]],
-                        ["C6H14", ["Hexanes", False]],
-                        ["C6H6", ["Benzene", False]],
-                        ["CH3CH3SO", ["DMSO", False]]]
-
-        error = ""
-        formula = ""
-        #Handle returns of different types
-        r = self.request.get('r')
-        if r:
-            if r == 'nf':
-                error = "You need to enter information before getting results. "
-            elif r == "r":
-                for s in solvent_list:
-                    s[1][1] = False
-            elif r == "c":
-                formula = check_secure_val(self.request.cookies.get('f'))
-                s = check_secure_val(self.request.cookies.get('s'))
-                if s:
-                    sol = literal_eval(s)
-                    for s in sol:
-                        for t in solvent_list:
-                            if s[0] == t[1][0]:
-                                t[1][1] = True
-                e = check_secure_val(self.request.cookies.get('e'))
-                if e:
-                    exp = literal_eval(e)
-                    for e in exp:
-                        for f in e_var:
-                            if e[0] == f[0]:
-                                f[2] = e[1]
-            elif r == 'e':
-                error = "Woops! Something went wrong. The admin has been notified. Please try again, refresh the page, or come back in a few days if it still doesn't work"
-            elif r == 'ec':
-                error = "Don't modify cookies... enter new values"
-            elif r.isnumeric():
-                error = "An error %s happened. Please try again" % r
-
-        template_values = {"formula": formula, "exp_variables": e_var,
-                           "solvent_variables": solvent_list, "error": error,
-                           "other_variables": other_variables}
-        self.response.set_cookie('f', "")
-        self.response.set_cookie('s', "")
-        self.response.set_cookie('e', "")
-        self.render_front(template_values)
-
-    def post(self):
+    if request.method == 'POST':
         """Process the form"""
         error = ""
         o_var = [["", "other1"],
@@ -300,7 +226,10 @@ def EaMainPage():
                  "error": "", "solvent_variables": s_var,
                  "other_variables": o_var}
         solvents = []
-        sget = self.request.get_all("solvent")
+
+        resp = make_response(render_template("results.html"))
+
+        sget = request.form("solvent")
         for s in sget:
             name = ""
             for i in s_var:
@@ -309,13 +238,13 @@ def EaMainPage():
                     i[1][1] = True
             solvents.append([name, str(s)])
         for o in o_var:
-            d = str(self.request.get(o[1]))
+            d = str(request.form(o[1]))
             if d != "":
                 valid, error = parse_formula(d, error)
                 if valid:
                     solvents.append(["", d])
                     o[0] = d
-        formula = self.request.get("formula")
+        formula = request.form("formula")
         if not formula:
             error = error + "You need to enter a formula. "
         else:
@@ -323,7 +252,7 @@ def EaMainPage():
 
         exp = False
         for e in e_var:
-            e[2] = str(self.request.get(e[1]))
+            e[2] = str(request.form(e[1]))
             if not is_floatable(e[2]) and e[2] != "":
                 error = error + "Not a number error for Experimental %s. " % e[0]
             elif e[2] != '':
@@ -332,8 +261,8 @@ def EaMainPage():
         if exp is False:
             #want normal value
             if solvents == []:
-                self.response.set_cookie('f', make_secure_val(formula))
-                self.redirect("/ea/results/")
+                resp.set_cookie('f', make_secure_val(formula))
+                return resp
             else:
                 #need to know how much solvent?
                 error = error + "Can't calculate solvent inclusion without experimental values. To include co-crystallized solvents, use the * notation. "
@@ -347,10 +276,10 @@ def EaMainPage():
             for e in e_var:
                 if e[2] != "":
                     experimentals.append((e[0], e[2]))
-            self.response.set_cookie('f', make_secure_val(formula))
-            self.response.set_cookie('s', make_secure_val(solvents))
-            self.response.set_cookie('e', make_secure_val(experimentals))
-            self.redirect("/ea/results/")
+            resp.set_cookie('f', make_secure_val(formula))
+            resp.set_cookie('s', make_secure_val(solvents))
+            resp.set_cookie('e', make_secure_val(experimentals))
+            return resp
 
         if not error == "":
             for s in s_var:
@@ -363,7 +292,77 @@ def EaMainPage():
             t_var['error'] = error
             t_var['solvent_variables'] = s_var
             t_var['other_variables'] = o_var
-            self.render_front(t_var)
+            resp = make_response(render_template("eaform.html", **t_var))
+            return resp
+
+    else:  # GET
+        """Prep the front page for rendering"""
+        other_variables = [["", "other1"],
+                           ["", "other2"],
+                           ["", "other3"]]
+        e_var = [["C", "exp_c", ""],
+                 ["H", "exp_h", ""],
+                 ["N", "exp_n", ""],
+                 ["O", "exp_o", ""],
+                 ["S", "exp_s", ""],
+                 ["P", "exp_p", ""],
+                 ["F", "exp_f", ""],
+                 ["Cl", "exp_cl", ""],
+                 ["Br", "exp_br", ""],
+                 ["I", "exp_i", ""]]
+        solvent_list = [["H2O", ["Water", False]],
+                        ["CH2Cl2", ["Methylene Chloride", False]],
+                        ["CHCl3", ["Chloroform", False]],
+                        ["CH3COH", ["Acetone", False]],
+                        ["CH3CN", ["Acetonitrile", False]],
+                        ["C7H8", ["Toluene", False]],
+                        ["CH3OH", ["Methanol", False]],
+                        ["CH3COH3", ["Ethanol", False]],
+                        ["C6H14", ["Hexanes", False]],
+                        ["C6H6", ["Benzene", False]],
+                        ["CH3CH3SO", ["DMSO", False]]]
+
+        error = ""
+        formula = ""
+        #Handle returns of different types
+        r = request.args.get('r')
+        if r:
+            if r == 'nf':
+                error = "You need to enter information before getting results. "
+            elif r == "r":
+                for s in solvent_list:
+                    s[1][1] = False
+            elif r == "c":
+                formula = check_secure_val(request.cookies.get('f'))
+                s = check_secure_val(request.cookies.get('s'))
+                if s:
+                    sol = literal_eval(s)
+                    for s in sol:
+                        for t in solvent_list:
+                            if s[0] == t[1][0]:
+                                t[1][1] = True
+                e = check_secure_val(request.cookies.get('e'))
+                if e:
+                    exp = literal_eval(e)
+                    for e in exp:
+                        for f in e_var:
+                            if e[0] == f[0]:
+                                f[2] = e[1]
+            elif r == 'e':
+                error = "Woops! Something went wrong. The admin has been notified. Please try again, refresh the page, or come back in a few days if it still doesn't work"
+            elif r == 'ec':
+                error = "Don't modify cookies... enter new values"
+            elif r.isnumeric():
+                error = "An error %s happened. Please try again" % r
+
+        template_values = {"formula": formula, "exp_variables": e_var,
+                           "solvent_variables": solvent_list, "error": error,
+                           "other_variables": other_variables}
+        resp = make_response(render_template("eaform.html", **template_values))
+        resp.set_cookie('f', "")
+        resp.set_cookie('s', "")
+        resp.set_cookie('e', "")
+        return resp
 
 
 @app.route('/')
@@ -431,11 +430,15 @@ def IsotopeHelpHandler():
 
 @app.errorhandler(404)
 def page_not_found(e):
+    """Simple 404 error handler"""
     return render_template('404.html'), 404
+
 
 @app.errorhandler(500)
 def server_error(e):
+    """Simple 500 error handler"""
     return render_template('500.html'), 500
+
 
 if __name__ == "__main__":
     app.run()
