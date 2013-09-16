@@ -16,7 +16,7 @@ JINJA_ENV = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
                                autoescape=True)
 
 app = Flask(__name__)
-app.debug = True
+#app.debug = True
 
 if not app.debug:
     file_handler = RotatingFileHandler('warning.log', 'a', 1 * 1024 * 1024, 10)
@@ -470,5 +470,5 @@ def server_error(e):
     return render_template('500.html'), 500
 
 if __name__ == "__main__":
-    app.debug = True
+    #app.debug = True
     app.run()
