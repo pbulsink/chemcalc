@@ -1,5 +1,12 @@
-  <h1>Server Error</h1>
-  <p>Something Broke. Sorry.</p>
-  <p>Error {{e}}</p>
-  <p><a href="/">Back to Home</a></p>
-
+{% extends "base_layout.html" %}
+{% block Title%}500 - Server Error{% endblock %}
+{% block Navbar%}{% include "navbar.html" %}{% endblock %}
+{% block Content %}
+  <div class="container">
+    <div class="well">
+      <h2>Server Error</h2>
+      <p>Something Broke. Sorry about that!</p>
+      <p><a href="/">Back to Home</a></p>
+    </div>
+  </div>
+{% endblock %}

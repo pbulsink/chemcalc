@@ -1,50 +1,7 @@
-<!doctype html>
-
-<html>
-  <head>
-    <title>Results - ChemCalculator</title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="robots" content="noindex">
-    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootswatch/3.0.0/flatly/bootstrap.min.css">
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-    <meta name="google-site-verification" content="Y79BxTt4LQQyR2TwMdYkBa7KnRggtINCA6S-v7rsqAg" />
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-      ga('create', 'UA-43106562-1', 'chn-solvent.appspot.com');
-      ga('send', 'pageview');
-    </script>
-  </head>
-  
-  <body>
-    <header>
-      <div class="navbar navbar-static-top navbar-default">
-        <div class="container">
-          <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-              <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
-            </button>
-            <a href="/" class="navbar-brand">ChemCalculator</a>
-          </div>
-          <div class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-              <li>
-                <a href="/">Home</a>
-              </li>
-              <li class="active">
-                <a href="/ea">Elemental Analysis</a>
-              </li>
-              <li>
-                <a href="/isotopes">Table of Isotopes</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </header>
+{% extends "base_layout.html" %}
+{% block Title%}Results - Elemental Analysis{% endblock %}
+{% block Navbar%}{% include "navbar-ea.html" %}{% endblock %}
+{% block Content %}
     <div class="container">
       <h4>Calculated for Formula: {{formula}}</h4>
       <div class="row">
@@ -80,7 +37,7 @@
               {% endfor %}
             </tbody>
           </table>
-          <p>Molar Mass: {{'%s' % mmass}} g/mol</p>
+          <p>Molar Mass: {{'%0.2f' % mmass}} g/mol</p>
         </div>
         {% if rtype == "calc" %}
         <div class="col-md-6">
@@ -111,17 +68,8 @@
       </div>
       <div class="container">
         <!--<h4>Resulting Formula: {{result_formula}}</h4>-->
-        <a href="/ea/?r=r" class="btn btn-primary">New Calculation</a>
-        <a href="/ea/?r=c" class="btn btn-primary">Edit Input</a>
+        <a href="/ea?r=r" class="btn btn-primary">New Calculation</a>
+        <a href="/ea?r=c" class="btn btn-primary">Edit Input</a>
       </div>
       <hr>
-    </div>
-    <footer>
-      <div class="container">
-        <p>&copy; 2013 Philip Bulsink &bull; <a href="/about">About</a> &bull; <a href="/contact">Contact</a></p>
-      </div>
-    </footer>
-    <br>
-  </body>
-
-</html>
+{% endblock %}

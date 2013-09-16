@@ -1,4 +1,16 @@
-  <h1>Page Not Found</h1>
-  <p>What you were looking for is just not there.</p>
-  <p><a href="/">Back to Home</a></p>
+{% extends "base_layout.html" %}
+{% block Title%}404 - Not Found{% endblock %}
+{% block Navbar%}{% include "navbar.html" %}{% endblock %}
+{% block Content %}
+  <div class="container">
+    <div class="well">
+      <h2>Page Not Found!</h2>
+      <p>The page you're looking for isn't available here! If you typed it in,
+      please check your typing. If you followed a link from somewhere, let them
+      know this isn't a page anymore. If you were redirect here form our own page,
+      please <a href="/contact">contact us</a>!</p>
+      <p><a href="/">Back to Home</a></p>
+    </div>
+  </div>
+{% endblock %}
 

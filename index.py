@@ -5,7 +5,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 import hmac
 from ast import literal_eval
-from flask import Flask, render_template, request, make_response, redirect, url_for
+from flask import Flask, render_template, request, make_response, redirect, url_for, send_from_directory
 from script.parse import parse  # Import the parser
 from script.solvent_correct import get_ea, solvent_calculate  # Import the calculator
 from script.secret import secret  # Keep the secret from the open source files.
@@ -165,21 +165,21 @@ def EaResultHandler():
     exp = dict()
     formula = check_secure_val(request.cookies.get('f'))
     if not formula:
-        return redirect('/ea/?r=ecf')
+        return redirect('/ea?r=ecf')
     fparsed, e = parse_formula(formula, "")
     s = check_secure_val(request.cookies.get('s'))
     if s:
         solvent = literal_eval(s)
     elif s is None:
-        return redirect('/ea/r=ecs')
+        return redirect('/ea?r=ecs')
     e = check_secure_val(request.cookies.get('e'))
     if e:
         exp = dict(literal_eval(e))
     elif e is None:
-        return redirect('/ea/?r=ece')
+        return redirect('/ea?r=ece')
 
     if formula == "":
-        return redirect('/ea/?r=nf')
+        return redirect('/ea?r=nf')
     elif solvent == []:
         results = get_ea(fparsed)
     else:
@@ -437,7 +437,7 @@ def IsotopeHandler(relement=None):
     isotopes = sorted(isotopes,
                       key=lambda isotopes: (isotopes[2], isotopes[3][0]))
     template_values = {"elements": isotopes, "element_name": element_names,
-                       "element_symbol": element_symbols}
+                       "element_symbol": element_symbols, "hclass": "isotopes"}
     return render_template("mass_table.html", **template_values)
 
 
@@ -447,19 +447,31 @@ def IsotopeHelpHandler():
     return render_template("isotopehelp.html")
 
 
+@app.route('/sitemap')
+def SitemapHandler():
+    """Return the sitemap.html page"""
+    return render_template("sitemap.html")
+
+
+@app.route('/robots.txt')
+@app.route('/sitemap.xml')
+@app.route('/favicon.ico')
+def static_from_root():
+    """Serve static sitemap.xml and robots.txt"""
+    return send_from_directory(app.static_folder, request.path[1:])
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     """Simple 404 error handler"""
     app.logger.info(e)
     return render_template('404.html'), 404
 
-
-#@app.errorhandler(500)
-#def server_error(e):
-#    """Simple 500 error handler"""
-#    app.logger.error(e)
-#    return render_template('500.html', e=e), 500
-
+@app.errorhandler(500)
+def server_error(e):
+    """Simple 500 error handler"""
+    app.logger.error(e)
+    return render_template('500.html'), 500
 
 if __name__ == "__main__":
     app.debug = True

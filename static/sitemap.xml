@@ -6,7 +6,7 @@
 
       <loc>http://chemcalculator.com/</loc>
 
-      <lastmod>2013-09-13</lastmod>
+      <lastmod>2015-09-15</lastmod>
 
       <changefreq>weekly</changefreq>
 
@@ -18,7 +18,7 @@
 
       <loc>http://chemcalculator.com/ea</loc>
 
-      <lastmod>2013-09-13</lastmod>
+      <lastmod>2015-09-15</lastmod>
 
       <changefreq>weekly</changefreq>
 
@@ -30,7 +30,7 @@
 
       <loc>http://chemcalculator.com/about</loc>
 
-      <lastmod>2013-09-13</lastmod>
+      <lastmod>2015-09-15</lastmod>
 
       <changefreq>weekly</changefreq>
 
@@ -42,7 +42,7 @@
 
       <loc>http://chemcalculator.com/contact</loc>
 
-      <lastmod>2013-09-13</lastmod>
+      <lastmod>2015-09-15</lastmod>
 
       <changefreq>weekly</changefreq>
 
@@ -52,9 +52,21 @@
 
    <url>
 
+      <loc>http://chemcalculator.com/sitemap</loc>
+
+      <lastmod>2015-09-15</lastmod>
+
+      <changefreq>weekly</changefreq>
+
+      <priority>0.1</priority>
+
+   </url>
+   
+   <url>
+
       <loc>http://chemcalculator.com/ea/help</loc>
 
-      <lastmod>2013-09-13</lastmod>
+      <lastmod>2015-09-15</lastmod>
 
       <changefreq>weekly</changefreq>
 
@@ -66,7 +78,7 @@
 
       <loc>http://chemcalculator.com/isotopes</loc>
 
-      <lastmod>2013-09-13</lastmod>
+      <lastmod>2015-09-15</lastmod>
 
       <changefreq>weekly</changefreq>
 
@@ -78,7 +90,7 @@
 
       <loc>http://chemcalculator.com/isotopes/help</loc>
 
-      <lastmod>2013-09-13</lastmod>
+      <lastmod>2015-09-15</lastmod>
 
       <changefreq>weekly</changefreq>
 

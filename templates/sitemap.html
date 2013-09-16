@@ -1,0 +1,25 @@
+{% extends "base_layout.html" %}
+{% block Title%}Sitemap{% endblock %}
+{% block Navbar%}{% include "navbar.html" %}{% endblock %}
+{% block Content %}
+    <div class="container">
+      <div class="well">
+        <div>
+          <p><h2>Sitemap</h2></p>
+          <p>The website contains a number of pages:</p>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/ea">Elemental Analysis Calculator and Solvent Corrector</a></li>
+            <ul><li><a href="/ea/help">Elemental Analysis Help</a></li></ul>
+            <li><a href="/isotopes">Table of the Isotopes</a></li>
+            <ul><li><a href="/isotopes/help">Table of the Isotopes Help</a></li></ul>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="/sitemap">Sitemap</a></li>
+          </ul>
+          <p><a href="/" class="btn btn-primary">Back to Home</a></p>
+        </div>
+      </div>
+      <div class="row"></div>
+    </div>
+{% endblock %}
