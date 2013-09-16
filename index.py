@@ -160,7 +160,6 @@ def ContactHandler():
 @app.route('/ea/results')
 def EaResultHandler():
     """Requests calculation, rendering, draw results"""
-    print "ea start"
     solvent = list()
     exp = dict()
     formula = check_secure_val(request.cookies.get('f'))
@@ -185,8 +184,6 @@ def EaResultHandler():
     else:
         results = solvent_calculate(fparsed, solvent, exp)
     rendered_results = render_results(results, exp, solvent, formula)
-    print "ea end"
-    print rendered_results
 
     template_values = {'formula': formula,
                        'rtype': rendered_results['rtype'],
@@ -314,7 +311,6 @@ def EaMainPage():
             t_var['solvent_variables'] = s_var
             t_var['other_variables'] = o_var
             resp = make_response(render_template("eaform.html", **t_var))
-            print "Go To EA"
             return resp
 
     else:  # GET
