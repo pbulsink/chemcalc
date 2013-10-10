@@ -1,9 +1,17 @@
 {% extends "base_layout.html" %}
-{% block Title%}Elemental Analysis{% endblock %}
-{% block Navbar%}{% include "navbar-ea.html" %}{% endblock %}
+{% block Title %}Elemental Analysis{% endblock %}
+{% block Head %}
+    <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
+    <meta http-equiv="Expires" content="-1">
+{% endblock %}
+{% block Navbar %}{% include "navbar-ea.html" %}{% endblock %}
 {% block Content %}
     <div class="container">
       <div class="row">
+        <div align="centre">
+          <p>Calculate the percent composition of a molecule by entering the formula and pressing Calculate. You can also correct an experimental
+          elemental analysis to the theoretical by inclusion of solvent molecules. Enter the formula, the experimental results, and some potential solvent impurities.</p>
+        </div>
         <form method="post">
           <div class="col-md-5">
             <label class="form-label">Enter your sample's formula:</label>
@@ -31,7 +39,7 @@
 
           <div class="col-md-5">
             <div class="form-group">
-              <label class="control-label">Possible Solvent Contaminents. <br> More than 3 solvents likely won't finish calculating.</label>
+              <label class="control-label">Possible Solvent Contaminents. <br> Use three or less to ensure quick calculations.</label>
               <div class="controls">
                 {% for s in solvent_variables %}
                 <div class="checkbox">
@@ -70,7 +78,7 @@
       <div class="alert alert-danger">
         {{error}}
       </div>
-    {% endif %}
+      {% endif %}
     <hr>
     </div>
 {% endblock %}

@@ -7,14 +7,14 @@ from ast import literal_eval
 from flask import Flask, render_template, request, make_response, redirect, url_for, send_from_directory
 from script.solvent_correct import get_ea, solvent_calculate  # Import the calculator
 from script.chemcalc_utilities import *
-from app import app
+from chemcalculator_app import app
 
-#TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
+TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
 #JINJA_ENV = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
 #                               autoescape=True)
 
 app = Flask(__name__)
-#app.debug = True
+app.debug = True
 
 if not app.debug:
     file_handler = RotatingFileHandler('warning.log', 'a', 1 * 1024 * 1024, 10)
@@ -406,7 +406,6 @@ def SitemapHandler():
     """Return the sitemap.html page"""
     return render_template("sitemap.html")
 
-
 @app.route('/exact-mass')
 def ExactMassDistribute(informula=None):
     """Put up the form to get info for exact mass."""
@@ -458,7 +457,7 @@ def server_error(e):
     return resp, 500
 
 if __name__ == "__main__":
-    #app.debug = True
+    app.debug = True
     app.run()
 
 

@@ -1,0 +1,78 @@
+{% extends "base_layout.html" %}
+{% block Title %}Elemental Analysis{% endblock %}
+{% block Head %}
+    <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
+    <meta http-equiv="Expires" content="-1">
+{% endblock %}
+{% block Navbar %}{% include "navbar-mass.html" %}{% endblock %}
+{% block Content %}
+    <div class="container">
+      <div>
+        <p>Enter a formula to have the exact mass distribution calculated. This mass adds up individual isotopes, not molecular averages.
+        A chart will be generated to display the results</p>
+      </div>
+      <div class="container">
+        <form method="post">
+          <table class="table">
+            <tbody>
+              <tr>
+                <td>Enter formula:</td>
+                <td><input type="text" class="form-control" name="formula"></td>
+              </tr>
+              <tr>
+                <td>Precision:</td>
+                <td>
+                  <select class="form-control" name="p">
+                    <option value="0">1 %</option>
+                    <option value="1">0.1 %</option>
+                    <option value="2">0.01%</option>
+                    <option value="3">0.001 %</option>
+                    <option value="4">0.0001 %</option>
+                    <option value="5">0.00001%</option>
+                    <option value="6">0.000001 %</option>
+                    <option value="7">0.0000001 %</option>
+                    <option value="8">0.00000001%</option>
+                  </select>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+      </div>
+      {% if error %}
+        <div class="container">
+          <p class="clearfix"></p>
+        </div>
+        <div class="alert alert-danger">
+          {{error}}
+        </div>
+      {% endif %}
+      <div>
+        <p>For example, for the molecule chloroform (CHCl<sub>3</sub>), the exact mass calculation results in the following:</p>
+        <table class="table">
+            <tbody>
+              <tr><td>Mass</td><td>Intensity</td></tr>
+              <tr><td>117.91439</td><td>100.0000</td></tr>
+              <tr><td>118.91775</td><td>1.0816</td></tr>
+              <tr><td>118.92066</td><td>0.0160</td></tr>
+              <tr><td>119.91144</td><td>97.1932</td></tr>
+              <tr><td>119.92402</td><td>0.0002</td></tr>
+              <tr><td>120.91480</td><td>1.0512</td></tr>
+              <tr><td>120.91771</td><td>0.0156</td></tr>
+              <tr><td>121.90849</td><td>31.4884</td></tr>
+              <tr><td>121.92107</td><td>0.0002</td></tr>
+              <tr><td>122.91185</td><td>0.3406</td></tr>
+              <tr><td>122.91476</td><td>0.0050</td></tr>
+              <tr><td>123.90554</td><td>3.4005</td></tr>
+              <tr><td>123.91812</td><td>0.0001</td></tr>
+              <tr><td>124.90890</td><td>0.0368</td></tr>
+              <tr><td>124.91181</td><td>0.0005</td></tr>
+      </div>
+      <!-- <img> -->
+      <p>This is due to the natual distribution of isotopes that composes each element. Chlorine has isotopes at approximately 35 and 37 amu.
+      The mass of chlorine on the periodic table (35.453) is a weighted average of all the isotopes. However, for mass spec and other methods
+      that look at individual molecule masses, the exact mass of the isotopes composing that molecule is important. For exact masses of all
+      the elements, view the table here: <a href="/isotopes">Table of Isotopes</a>.</p>
+      <hr>
+    </div>
+{% endblock %}

@@ -2,7 +2,8 @@
 
 <html>
   <head>
-    <title>{%block Title %}{% endblock %} - ChemCalculator</title>
+    <meta charset="UTF-8">
+    <title>{% block Title %}{% endblock %} - ChemCalculator</title>
     <meta name="viewport" content="width=fixed-width">
     <meta name="robots" content="noindex">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
@@ -21,6 +22,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
+    {% block Head %}{% endblock %}
   </head>
   
   <body>
@@ -63,15 +65,17 @@
     </footer>
     <br>
     <hr>
-    <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <!-- Text Ads -->
-    <ins class="adsbygoogle"
-         style="display:inline-block;width:468px;height:60px"
-         data-ad-client="ca-pub-3487478549922345"
-         data-ad-slot="8639746717"></ins>
-    <script>
-    (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
+    <div align="center">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- Main Ads -->
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:728px;height:90px"
+             data-ad-client="ca-pub-3487478549922345"
+             data-ad-slot="1806517111"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
   </body>
 
 </html>

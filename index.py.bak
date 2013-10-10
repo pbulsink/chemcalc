@@ -3,15 +3,17 @@ import webapp2
 import jinja2
 import logging
 from logging.handlers import RotatingFileHandler
+import hmac
 from ast import literal_eval
 from flask import Flask, render_template, request, make_response, redirect, url_for, send_from_directory
+from script.parse import parse  # Import the parser
 from script.solvent_correct import get_ea, solvent_calculate  # Import the calculator
-from script.chemcalc_utilities import *
-from app import app
+from script.secret import secret  # Keep the secret from the open source files.
+from script.elements_list import ELEMENTS
 
-#TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
-#JINJA_ENV = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
-#                               autoescape=True)
+TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
+JINJA_ENV = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
+                               autoescape=True)
 
 app = Flask(__name__)
 #app.debug = True
@@ -24,6 +26,46 @@ else:
     file_handler.setLevel(logging.WARNING)
     
 app.logger.addHandler(file_handler)
+
+def check_secure_val(secure_val):
+    """Verify value is unmodified, and return it"""
+    if secure_val == "":
+        return ""
+    val = secure_val.split('|')[0]
+    if secure_val == make_secure_val(val):
+        return val
+    else:
+        return None
+
+
+def is_floatable(s):
+    """Return true/false if string is float number"""
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+
+def make_secure_val(val):
+    """Write string with value, hash, for cookies security checking"""
+    return '%s|%s' % (str(val), hmac.new(secret, str(val)).hexdigest())
+
+
+def parse_formula(formula, error):
+    """
+    Parse formula to list of elements and number of appearances. Catch bad
+    formulas and return error.
+    """
+    valid_formula = ""
+    try:
+        valid_formula = parse(formula).return_elements()
+    except ValueError:
+        valid_formula = None
+        error = error + "Not a valid Formula"
+    except:
+        error = error + "Unknown Error. "
+    return valid_formula, error
 
 
 def render_results(results, exp, solvent, formula):
@@ -407,27 +449,6 @@ def SitemapHandler():
     return render_template("sitemap.html")
 
 
-@app.route('/exact-mass')
-def ExactMassDistribute(informula=None):
-    """Put up the form to get info for exact mass."""
-    if request.method == 'POST':
-        return redirect('/exact-mass/%s' % response)
-    else:
-        if informula:
-            #results
-            formula, error = parse_formula(informula, "")
-            if error:
-                resp = render_template('exact-mass.html', error=error)
-            isotopes = isotope_distribute(formula)
-            plot = plot_isotopes(isotopes)
-            
-            resp = make_response(render_template("distribute_results.html"))
-            
-            return resp
-        else:
-            return render_template('exact-mass.html')
-
-
 @app.route('/robots.txt')
 @app.route('/sitemap.xml')
 @app.route('/favicon.ico')
@@ -460,5 +481,3 @@ def server_error(e):
 if __name__ == "__main__":
     #app.debug = True
     app.run()
-
-
