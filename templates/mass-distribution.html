@@ -1,0 +1,58 @@
+{% extends "base_layout.html" %}
+{% block Title %}Isotopic Distribution Results{% endblock %}
+{% block Head %}
+    <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
+    <meta http-equiv="Expires" content="-1">
+{% endblock %}
+{% block Navbar %}{% include "navbar-distribution.html" %}{% endblock %}
+{% block Content %}
+    <div class="container">
+      <div>
+        <h2>Exact Mass Distribution Calculator</h2>
+          <div class="container">
+            <div class="row">
+              <div class="col-md-6">
+                <h4>Calculated results for
+                {% for f in formula -%}
+                  {{f[0]}}<sub>{% if f[1] > 1 -%}{{f[1]}}{%- endif %}</sub>
+                {%- endfor %}</h4>
+                <table class="table table-condensed">
+                    <tbody>
+                      <tr><td>Mass</td><td>Intensity</td></tr>
+                      {% for i in isotopes %}
+                      <tr><td>{{i[0]}}</td><td>{{i[1]}}</td></tr>
+                      {% endfor %}
+                    </tbody>
+                </table>
+              </div>
+              <div class="col-md-6">
+                <img src="http://chemcalculator.com/static/plots/{{plot_filename}}" alt="{{plot_title}} Distribution of Isotopic Masses" width="450">
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="container">
+        <h4>Calculate another distribution:</h4>
+        <form method="post">
+          <table class="table">
+            <tbody>
+              <tr>
+                <td>Enter formula:</td>
+                <td><input type="text" class="form-control" name="formula"></td>
+                <td><button class="btn btn-primary" type="submit">Submit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+      {% if error %}
+        <div class="container">
+          <p class="clearfix"></p>
+        </div>
+        <div class="alert alert-danger">
+          {{error}}
+        </div>
+      {% endif %}
+      </div>
+    <hr>
+    </div>
+{% endblock %}

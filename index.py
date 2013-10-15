@@ -7,11 +7,7 @@ from ast import literal_eval
 from flask import Flask, render_template, request, make_response, redirect, url_for, send_from_directory
 from script.solvent_correct import get_ea, solvent_calculate  # Import the calculator
 from script.chemcalc_utilities import *
-from app import app
-
-#TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
-#JINJA_ENV = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
-#                               autoescape=True)
+#from app import app
 
 app = Flask(__name__)
 #app.debug = True
@@ -90,12 +86,6 @@ def render_results(results, exp, solvent, formula):
             except:
                 logging.exception("error ln 116 %s, %s" % (str(r[0]), str(rexp)))
         rendered_results['diff'] = results[5]
-        # result_formula = formula + '*'
-        # eventual printing out of formula * solvents.
-        # requires dictionary or modified solvent_correct.
-        # logging.info(str(sresult))
-        # for s in sresult:
-        #    result_formula = result_formula + ("%0.2f" % s[1]) + s[3]
 
     # Build rendered_results from components.
     rendered_results['exp'] = rexp
@@ -104,18 +94,21 @@ def render_results(results, exp, solvent, formula):
 
 
 @app.route('/about')
+@app.route('/about/')
 def AboutHandler():
     """Simple about-us handler"""
     return render_template("about.html")
 
 
 @app.route('/contact')
+@app.route('/contact/')
 def ContactHandler():
     """Simple Contact-Us handler"""
     return render_template("contact.html")
 
 
 @app.route('/ea/results')
+@app.route('/ea/results/')
 def EaResultHandler():
     """Requests calculation, rendering, draw results"""
     solvent = list()
@@ -149,7 +142,8 @@ def EaResultHandler():
                        'solvent': rendered_results['solvent'],
                        'diff': rendered_results['diff'],
                        'result_formula': rendered_results['result_formula'],
-                       'mmass': rendered_results['mmass']}
+                       'mmass': rendered_results['mmass'],
+                       }
     return render_template("results.html", **template_values)
                        #    formula=formula,
                        #    rtype = rendered_results['rtype'],
@@ -162,12 +156,14 @@ def EaResultHandler():
 
 
 @app.route('/ea/help')
+@app.route('/ea/help/')
 def EaHelpHandler():
     """Simple help handler"""
     return render_template("eahelp.html")
 
 
 @app.route('/ea', methods=['POST', 'GET'])
+@app.route('/ea/', methods=['POST', 'GET'])
 def EaMainPage():
     """Main page. Handles form POST, and flagged returns (errors, etc.)"""
 
@@ -176,7 +172,8 @@ def EaMainPage():
         error = ""
         o_var = [["", "other1"],
                  ["", "other2"],
-                 ["", "other3"]]
+                 ["", "other3"]
+                 ]
         s_var = [["H2O", ["Water", False]],
                  ["CH2Cl2", ["Methylene Chloride", False]],
                  ["CHCl3", ["Chloroform", False]],
@@ -187,7 +184,8 @@ def EaMainPage():
                  ["CH3COH3", ["Ethanol", False]],
                  ["C6H14", ["Hexanes", False]],
                  ["C6H6", ["Benzene", False]],
-                 ["CH3CH3SO", ["DMSO", False]]]
+                 ["CH3CH3SO", ["DMSO", False]]
+                 ]
         e_var = [["C", "exp_c", ""],
                  ["H", "exp_h", ""],
                  ["N", "exp_n", ""],
@@ -197,7 +195,8 @@ def EaMainPage():
                  ["F", "exp_f", ""],
                  ["Cl", "exp_cl", ""],
                  ["Br", "exp_br", ""],
-                 ["I", "exp_i", ""]]
+                 ["I", "exp_i", ""]
+                 ]
         t_var = {"formula": "", "exp_variables": e_var,
                  "error": "", "solvent_variables": s_var,
                  "other_variables": o_var}
@@ -331,9 +330,12 @@ def EaMainPage():
             elif r.isnumeric():
                 error = "An error %s happened. Please try again" % r
 
-        template_values = {"formula": formula, "exp_variables": e_var,
-                           "solvent_variables": solvent_list, "error": error,
-                           "other_variables": other_variables}
+        template_values = {"formula": formula,
+                           "exp_variables": e_var,
+                           "solvent_variables": solvent_list,
+                           "error": error,
+                           "other_variables": other_variables,
+                           }
         resp = make_response(render_template("eaform.html", **template_values))
         resp.set_cookie('f', "")
         resp.set_cookie('s', "")
@@ -348,6 +350,7 @@ def HomeHandler():
 
 
 @app.route('/isotopes/<relement>')
+@app.route('/isotopes/')
 @app.route('/isotopes')
 def IsotopeHandler(relement=None):
     e = request.args.get('e')
@@ -390,39 +393,66 @@ def IsotopeHandler(relement=None):
     element_symbols.insert(0, ["All Elements", ""])
     isotopes = sorted(isotopes,
                       key=lambda isotopes: (isotopes[2], isotopes[3][0]))
-    template_values = {"elements": isotopes, "element_name": element_names,
-                       "element_symbol": element_symbols, "hclass": "isotopes"}
+    template_values = {"elements": isotopes,
+                       "element_name": element_names,
+                       "element_symbol": element_symbols,
+                       "hclass": "isotopes",
+                       }
     return render_template("mass_table.html", **template_values)
 
 
 @app.route('/isotopes/help')
+@app.route('/isotopes/help/')
 def IsotopeHelpHandler():
     """Simple Isotope Help Handler"""
     return render_template("isotopehelp.html")
 
 
 @app.route('/sitemap')
+@app.route('/sitemap/')
 def SitemapHandler():
     """Return the sitemap.html page"""
     return render_template("sitemap.html")
 
-
-@app.route('/exact-mass')
+@app.route('/exact-mass/<informula>', methods=['POST', 'GET'])
+@app.route('/exact-mass/', methods=['POST', 'GET'])
+@app.route('/exact-mass', methods=['POST', 'GET'])
 def ExactMassDistribute(informula=None):
     """Put up the form to get info for exact mass."""
     if request.method == 'POST':
-        return redirect('/exact-mass/%s' % response)
+        formula=request.form.get('formula')
+        response, error = parse_formula(str(formula), "")
+        if error:
+            resp = render_template('exact-mass.html', error=error)
+            return resp
+        return redirect('/exact-mass/%s' % shorten_formula(response))
     else:
         if informula:
             #results
-            formula, error = parse_formula(informula, "")
+            formula, error = parse_formula(str(informula), "")
             if error:
                 resp = render_template('exact-mass.html', error=error)
+                return resp
+            logging.debug(formula)
+            sformula = shorten_formula(formula)
             isotopes = isotope_distribute(formula)
-            plot = plot_isotopes(isotopes)
+            name = md5(str(formula)).hexdigest()
+            filename = "%s.png" % name
+            directory = path.join(os.path.dirname(os.path.realpath(__file__)),'static','plots')
+            savepath = path.join(directory, filename)            # don't remake the plot if the file exists. Fails on no file or no dir.
+            if not path.isfile(savepath):
+                plt = plot_isotopes(isotopes, sformula)
+                #ensure the path is prepared
+                if not path.exists(directory):
+                    makedirs(directory)
+                plt.savefig(savepath, bbox_inches='tight')
             
-            resp = make_response(render_template("distribute_results.html"))
-            
+            template_values = {'plot_filename':filename,
+                               'isotopes':isotopes,
+                               'formula':sort_formula(formula),
+                               }
+            resp = make_response(render_template("mass-distribution.html",
+                                                 **template_values))
             return resp
         else:
             return render_template('exact-mass.html')

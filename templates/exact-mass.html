@@ -1,0 +1,74 @@
+{% extends "base_layout.html" %}
+{% block Title %}Isotopic Distribution Calculator{% endblock %}
+{% block Head %}
+    <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
+    <meta http-equiv="Expires" content="-1">
+{% endblock %}
+{% block Navbar %}{% include "navbar-distribution.html" %}{% endblock %}
+{% block Content %}
+    <div class="container">
+      <div>
+        <h2>Exact Mass Distribution Calculator</h2>
+        <p>Enter a formula to have the exact mass distribution calculated. This mass adds up individual isotopes, not molecular averages.
+        A chart will be generated to display the results</p>
+      </div>
+      <div class="container">
+        <form method="post">
+          <table class="table">
+            <tbody>
+              <tr>
+                <td>Enter formula:</td>
+                <td><input type="text" class="form-control" name="formula"></td>
+                <td><button class="btn btn-primary" type="submit">Submit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+      {% if error %}
+        <div class="container">
+          <p class="clearfix"></p>
+        </div>
+        <div class="alert alert-danger">
+          {{error}}
+        </div>
+      {% endif %}
+        <p>For example, for the molecule <a href="/exact-mass/CHCl3">chloroform (CHCl<sub>3</sub>)</a>, the exact mass calculation results in the following:</p>
+        <div class="container">
+            <div class="row">
+              <div class="col-md-6">
+                <table class="table table-condensed">
+                    <tbody>
+                      <tr><td>Mass</td><td>Intensity</td></tr>
+                      <tr><td>117.91439</td><td>100.0000</td></tr>
+                      <tr><td>118.91775</td><td>1.0816</td></tr>
+                      <tr><td>118.92066</td><td>0.0160</td></tr>
+                      <tr><td>119.91144</td><td>97.1932</td></tr>
+                      <tr><td>119.92402</td><td>0.0002</td></tr>
+                      <tr><td>120.91480</td><td>1.0512</td></tr>
+                      <tr><td>120.91771</td><td>0.0156</td></tr>
+                      <tr><td>121.90849</td><td>31.4884</td></tr>
+                      <tr><td>121.92107</td><td>0.0002</td></tr>
+                      <tr><td>122.91185</td><td>0.3406</td></tr>
+                      <tr><td>122.91476</td><td>0.0050</td></tr>
+                      <tr><td>123.90554</td><td>3.4005</td></tr>
+                      <tr><td>123.91812</td><td>0.0001</td></tr>
+                      <tr><td>124.90890</td><td>0.0368</td></tr>
+                      <tr><td>124.91181</td><td>0.0005</td></tr>
+                    </tbody>
+                </table>
+              </div>
+              <div class="col-md-6">
+                <img src="../static/plots/chcl3.png" alt="Chloroform Distribution of Isotopic Masses" width="450">
+              </div>
+            </div>
+        </div>
+      <p>This is due to the natual distribution of isotopes that composes each element. Chlorine has isotopes at approximately 35 and 37 amu.
+      Similarly, carbon has isotopes at 12 and 13 amu, and hydrogen has isotopes at 1 and 2 amu.
+      Element masses on the periodic table are a weighted average of all the isotopes (for chlorine, it's 35.453).
+      However, for mass spec and other methods that look at individual molecule masses, the exact mass of the isotopes composing that molecule is important.
+      The distribution comes from having one or more atoms of higher isotope mass be present in a molecule.</p>
+      
+      <p>For exact masses of all the elements, view the table here: <a href="/isotopes">Table of Isotopes</a>.</p></div>
+      <hr>
+    </div>
+{% endblock %}
