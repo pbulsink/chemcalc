@@ -457,11 +457,17 @@ def ExactMassDistribute(informula=None):
         else:
             return render_template('exact-mass.html')
 
+@app.route('/hire-me')
+@app.route('/give-me-a-job')
+def HiremeHandler():
+    """Return the sitemap.html page"""
+    return render_template("hireme.html")
 
 @app.route('/robots.txt')
 @app.route('/sitemap.xml')
 @app.route('/favicon.ico')
 @app.route('/BingSiteAuth.xml')
+@app.route('/resume.pdf')
 def static_from_root():
     """Serve static sitemap.xml and robots.txt"""
     return send_from_directory(app.static_folder, request.path[1:])
