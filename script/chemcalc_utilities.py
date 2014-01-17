@@ -5,6 +5,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from parse import parse  # Import the parser
+from secret import secret
 from elements_list import ELEMENTS
 from os import path, makedirs
 from hashlib import md5
