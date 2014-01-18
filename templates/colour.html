@@ -1,0 +1,73 @@
+{% extends "base_layout.html" %}
+{% block Title %}Wavelength Visualizer{% endblock %}
+{% block Head %}
+{% endblock %}
+{% block Navbar %}{% include "navbar.html" with active_page='colour' %}{% endblock %}
+{% block Content %}
+    <div class="container">
+      <div>
+        <h2>Wavelength Colour Visualizer</h2>
+        <p>
+          Do you ever need to know the colour of a specific wavelength, or wish
+          you could see what your sample is absorbing at, just knowing the value?
+          Knowing what colour a wavelength is can be important, but challenging.
+          This attempts to do that for you.
+        </p>
+        <p>
+          Different monitors display colours differently, depending on your
+          settings. As well, there's no direct formulaic way to convert from
+          nm to colour on screen. The method used here was originally designed
+          by <a href="http://www.midnightkite.com/color.html">Dan Bruton</a> and
+          the original calculation method can be seen <a href="http://http://www.physics.sfasu.edu/astro/color/spectra.html">here</a>.</p>
+      </div>
+      <div class="container">
+        <form method="post">
+          <table class="table">
+            <tbody>
+              <tr>
+                <td>Enter a wavelength:</td>
+                <td><input type="text" class="form-control" name="wavelength"></td>
+                <td><button class="btn btn-primary" type="submit">Submit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+      {% if error %}
+        <div class="container">
+          <p class="clearfix"></p>
+        </div>
+        <div class="alert alert-danger">
+          {{error}}
+        </div>
+      {% endif %}
+      {% if wavelength %}
+        <p>
+          <i>What colour is {{wavelength}} nm?</i>
+        </p>
+        <figure>
+          <img src="http://chemcalculator.com/static/wavelength/{{plot_filename}}" alt="Visualization of {{wavelength}} nm" width="200" style="display:block; margin-left:auto; margin-right:auto">
+          <figcaption>A representation of {{wavelength}} nm.</figcaption>
+        </figure>
+        <p>
+          Differences between colours one nanometer apart can be very hard to see.
+          Try spot the differences between this and <a href="/colour/{{before}}">{{before}} nm</a>
+          and <a href="/colour/{{after}}">{{after}} nm</a>. 
+        </p>
+      {% else %}
+        <p>
+        For example, for the wavelength <a href="/colour/550">550 nm</a>,
+        the colour calculation results in the following:
+        </p>
+        <figure>
+          <img src="http://chemcalculator.com/static/wavelength/550_nm.jpg" alt="550 nm Example" width="200" style="display:block; margin-left:auto; margin-right:auto">
+          <figcaption>A representation of 550 nm.</figcaption>
+        </figure>
+        <p>
+          Differences between colours one nanometer apart can be very hard to see.
+          Try spot the differences between this and <a href="/colour/549">549 nm</a>
+          and <a href="/colour/551">551 nm</a>. 
+        </p>
+      {% endif %}
+      <hr>
+    </div>
+{% endblock %}

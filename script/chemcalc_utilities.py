@@ -27,10 +27,9 @@ def is_floatable(s):
     """
     try:
         float(s)
-        return True
     except ValueError:
         return False
-
+    return True
 
 def make_secure_val(val):
     """Write string with value, hash, for cookies security checking"""
@@ -105,6 +104,7 @@ def sort_formula(formula):
     return sorted_formula
 
 def isotope_distribute(formula):
+    """calculate isotopic distribution of the provided formula"""
     e_formula = list()
     precision = 0.000001
     for e in formula:
@@ -143,10 +143,12 @@ def isotope_distribute(formula):
 
 
 def listofzero(y):
+    """Return a list of zeros of length y"""
     return [0]*len(y)
 
 
 def plot_isotopes(isotopes, sformula):
+    """Plot the isotopes as given to file"""
     x = list()
     y = list()
     for i in isotopes:
@@ -173,3 +175,11 @@ def plot_isotopes(isotopes, sformula):
 
     return plt
 
+
+def is_numeric(num):
+    """Checks if the value is an integer"""
+    try:
+        int(num)
+    except ValueError, TypeError:
+        return False
+    return True

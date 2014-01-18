@@ -4,9 +4,12 @@ import jinja2
 import logging
 from logging.handlers import RotatingFileHandler
 from ast import literal_eval
-from flask import Flask, render_template, request, make_response, redirect, url_for, send_from_directory
+from flask import Flask, render_template, request, make_response, redirect
+from flask import url_for, send_from_directory
+from script.nm_to_rgb import wavelength_to_rgb
 from script.solvent_correct import get_ea, solvent_calculate  # Import the calculator
 from script.chemcalc_utilities import *
+from PIL import Image
 #from app import app
 
 app = Flask(__name__)
@@ -347,6 +350,66 @@ def EaMainPage():
 def HomeHandler():
     """Homepage"""
     return render_template("home.html")
+
+
+@app.route('/colour/<wavelength>', methods=['POST', 'GET'])
+@app.route('/color/<wavelength>', methods=['POST', 'GET'])
+@app.route('/colour/', methods=['POST', 'GET'])
+@app.route('/colour', methods=['POST', 'GET'])
+@app.route('/color/', methods=['POST', 'GET'])
+@app.route('/color', methods=['POST', 'GET'])
+def ColourDrawer(wavelength=None):
+    """Put up the form to get info for colour showing."""
+    if request.method == 'POST':
+        wavelength=request.form.get('wavelength')
+        if int(wavelength)<380 or int(wavelength)>780:
+            error = "Visible light is between 380 and 780 nm."
+            resp = render_template('colour.html', error=error)
+            return resp
+        elif not is_numeric(wavelength):
+            error = "Form requires a number for wavelength lookup."
+            resp = render_template('colour.html', error=error)
+            return resp
+        if 'color' in request.base_url:
+            return redirect('/color/%s' % shorten_formula(response))
+        else:
+            return redirect('/colour/%s' % shorten_formula(response))
+    else:
+        if wavelength:
+            #results
+            if int(wavelength)<380 or int(wavelength)>780:
+                error = "Visible light is between 380 and 780 nm."
+                resp = render_template('colour.html', error=error)
+                return resp
+            elif not is_numeric(wavelength):
+                error = "Form requires a number for wavelength lookup."
+                resp = render_template('colour.html', error=error)
+                return resp
+            logging.debug(wavelength)
+            colour = wavelength_to_rgb(wavelength)
+            filename = "%s_nm.jgp" % wavelength
+            directory = path.join(os.path.dirname(os.path.realpath(__file__)),
+                                  'static','wavelength')
+            savepath = path.join(directory, filename)
+            # don't remake the plot if the file exists. Fails on no file or no dir.
+            if not path.isfile(savepath):
+                im = Image.new('RGB',
+                               (200, 200),
+                               (colour[0], colour[1], colour[2]))
+                #ensure the path is prepared
+                if not path.exists(directory):
+                    makedirs(directory)
+                im.save(savepath)
+            template_values = {'plot_filename':filename,
+                               'wavelength':wavelength,
+                               'before':int(wavelength)-1,
+                               'after':int(wavelength)+1,
+                               }
+            resp = make_response(render_template("colour.html",
+                                                 **template_values))
+            return resp
+        else:
+            return render_template('colour.html')
 
 
 @app.route('/isotopes/<relement>')
