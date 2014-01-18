@@ -1,12 +1,12 @@
-              <li>
+              <li{% if active_page == 'home' %} class="active"{% endif %}>
                 <a href="/">Home</a>
               </li>
-              <li>
+              <li{% if active_page == 'ea' %} class="active"{% endif %}>
                 <a href="/ea">Elemental Analysis</a>
               </li>
-              <li>
+              <li{% if active_page == 'isotopes' %} class="active"{% endif %}>
                 <a href="/isotopes">Table of Isotopes</a>
               </li>
-              <li>
+              <li{% if active_page == 'distribution' %} class="active"{% endif %}>
                 <a href="/exact-mass">Isotope Distribution Calculator</a>
               </li>

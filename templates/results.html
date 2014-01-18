@@ -4,7 +4,7 @@
     <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
     <meta http-equiv="Expires" content="-1">
 {% endblock %}
-{% block Navbar%}{% include "navbar-ea.html" %}{% endblock %}
+{% block Navbar%}{% include "navbar.html" with active_page='ea' %}{% endblock %}
 {% block Content %}
     <div class="container">
       <h4>Calculated for Formula: {{formula}}</h4>
