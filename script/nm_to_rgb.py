@@ -27,7 +27,7 @@ def wavelength_to_rgb(wavelength):
         green = 1
         blue = -(wavelength - 510)/float(510-490)
     elif wavelength < 580:
-        red = (wavelength-510)/(580-510)
+        red = (wavelength-510)/float(580-510)
         green = 1
         blue = 0
     elif wavelength < 645:
@@ -49,4 +49,4 @@ def wavelength_to_rgb(wavelength):
     red = int(red * 255 * intensity)
     green = int(green * 255 * intensity)
     blue = int(blue * 255 * intensity)
-    return [red, green, blue]
+    return red, green, blue
