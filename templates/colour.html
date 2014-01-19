@@ -42,13 +42,13 @@
       {% endif %}
       {% if wavelength %}
         <p>
-          <i>What colour is {{wavelength}} nm?</i>
+          <h2>What colour is {{wavelength}} nm?</h2>
         </p>
         <figure>
           <img src="http://chemcalculator.com/static/wavelength/{{plot_filename}}" alt="Visualization of {{wavelength}} nm" width="200" style="display:block; margin-left:auto; margin-right:auto">
-          <figcaption style="text-align:center; margin-left:auto; margin-right:auto">A representation of {{wavelength}} nm.</figcaption>
+          <figcaption style="text-align:center; margin-left:auto; margin-right:auto"><i>A representation of {{wavelength}} nm.</i></figcaption>
         </figure>
-        <p>The RGB colour value of {{wavelength}} is {{red}},{{green}},{{blue}}.</p>
+        <p>The calculated RGB colour value of {{wavelength}} nm is {{red}},{{green}},{{blue}}.</p>
         <p>
           Differences between colours one nanometer apart can be very hard to see.
           Try spot the differences between this, <a href="/colour/{{before}}">{{before}} nm</a>
@@ -61,7 +61,7 @@
         </p>
         <figure>
           <img src="http://chemcalculator.com/static/wavelength/550_nm.jpg" alt="550 nm Example" width="200" style="display:block; margin-left:auto; margin-right:auto">
-          <figcaption style="text-align:center; margin-left:auto; margin-right:auto">A representation of 550 nm.</figcaption>
+          <figcaption style="text-align:center; margin-left:auto; margin-right:auto"><i>A representation of 550 nm.</i></figcaption>
         </figure>
         <p>
           Differences between colours one nanometer apart can be very hard to see.
