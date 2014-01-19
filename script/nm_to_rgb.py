@@ -19,32 +19,26 @@ def wavelength_to_rgb(wavelength):
         red = -(wavelength-440)/(440-380)
         green = 0
         blue = 1
-        print "{},{},{}".format(red, green, blue)
     elif wavelength < 490:
         red = 0
         green = (wavelength - 440)/(490-440)
         blue = 1
-        print "{},{},{}".format(red, green, blue)
     elif wavelength < 510:
         red = 0
         green = 1
         blue = -(wavelength - 510)/(510-490)
-        print "{},{},{}".format(red, green, blue)
     elif wavelength < 580:
         red = (wavelength-510)/(580-510)
         green = 1
         blue = 0
-        print "{},{},{}".format(red, green, blue)
     elif wavelength < 645:
         red = 1
         green = -(wavelength-645)/(645-580)
         blue = 0
-        print "{},{},{}".format(red, green, blue)
     elif wavelength < 780:
         red = 1
         green = 0
         blue = 0
-        print "{},{},{}".format(red, green, blue)
     else:
         pass
 
