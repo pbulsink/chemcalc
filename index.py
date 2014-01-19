@@ -371,9 +371,9 @@ def ColourDrawer(wavelength=None):
             resp = render_template('colour.html', error=error)
             return resp
         if 'color' in request.base_url:
-            return redirect('/color/%s' % shorten_formula(response))
+            return redirect('/color/%s' % wavelength)
         else:
-            return redirect('/colour/%s' % shorten_formula(response))
+            return redirect('/colour/%s' % wavelength)
     else:
         if wavelength:
             #results

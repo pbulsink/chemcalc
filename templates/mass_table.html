@@ -1,8 +1,6 @@
 {% extends "base_layout.html" %}
 {% block Title%}Table of Isotopes{% endblock %}
-{% with active_page="isotopes" %}
-{% block Navbar %}{% include "navbar.html"%}{% endblock %}
-{% endwith %}
+{% block Navbar %}{% with active_page="isotopes" %}{% include "navbar.html"%}{% endwith %}{% endblock %}
 {% block Content %}
     <div class="container">
       <div class="well">

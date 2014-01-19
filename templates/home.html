@@ -1,8 +1,6 @@
 {% extends "base_layout.html" %}
 {% block Title%}Home{% endblock %}
-{% with active_page="home" %}
-{% block Navbar %}{% include "navbar.html"%}{% endblock %}
-{% endwith %}
+{% block Navbar %}{% with active_page="home" %}{% include "navbar.html"%}{% endwith %}{% endblock %}
 {% block Content %}
     <div class="jumbotron">
       <div class="container">
