@@ -16,11 +16,11 @@ app = Flask(__name__)
 #app.debug = True
 
 if not app.debug:
-    file_handler = RotatingFileHandler('warning.log', 'a', 1 * 1024 * 1024, 10)
-    file_handler.setLevel(logging.WARNING)
+    file_handler = logging.FileHandler(filename='/logs/debug.log')
+    file_handler.setLevel(logging.DEBUG)
 else:
-    file_handler = RotatingFileHandler('debug.log', 'a', 1 * 1024 * 1024, 10)
-    file_handler.setLevel(logging.WARNING)
+    file_handler = logging.FileHandler(filename='/logs/debug.log')
+    file_handler.setLevel(logging.DEBUG)
     
 app.logger.addHandler(file_handler)
 
