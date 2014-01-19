@@ -387,7 +387,7 @@ def ColourDrawer(wavelength=None):
                 return resp
             logging.debug(wavelength)
             colour = wavelength_to_rgb(wavelength)
-            filename = "%s_nm.jgp" % wavelength
+            filename = "%s_nm.jpg" % wavelength
             directory = path.join(os.path.dirname(os.path.realpath(__file__)),
                                   'static','wavelength')
             savepath = path.join(directory, filename)
