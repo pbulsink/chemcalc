@@ -404,6 +404,9 @@ def ColourDrawer(wavelength=None):
                                'wavelength':wavelength,
                                'before':int(wavelength)-1,
                                'after':int(wavelength)+1,
+                               'red':colour[0],
+                               'green':colour[1],
+                               'blue':colour[2],
                                }
             resp = make_response(render_template("colour.html",
                                                  **template_values))
