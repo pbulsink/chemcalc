@@ -377,8 +377,12 @@ def ColourDrawer(wavelength=None):
     else:
         if wavelength:
             #results
-            if int(wavelength)<380 or int(wavelength)>780:
-                error = "Visible light is between 380 and 780 nm."
+            if int(wavelength)<380:
+                error = "That's ultraviolet light. Visible light is between 380 and 780 nm."
+                resp = render_template('colour.html', error=error)
+                return resp
+            elif int(wavelength)>780:
+                error = "That's infra-red light. Visible light is between 380 and 780 nm."
                 resp = render_template('colour.html', error=error)
                 return resp
             elif not is_numeric(wavelength):

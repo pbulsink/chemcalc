@@ -34,7 +34,7 @@ def wavelength_to_rgb(wavelength):
         red = 1
         green = -(wavelength-645)/float(645-580)
         blue = 0
-    elif wavelength < 780:
+    elif wavelength < 781:
         red = 1
         green = 0
         blue = 0
@@ -43,8 +43,8 @@ def wavelength_to_rgb(wavelength):
 
     if wavelength > 380 and wavelength < 420:
         intensity = 0.3 + 0.7*(wavelength - 380)/float(420-380)
-    elif wavelength > 700 and wavelength <= 780:
-        intensity = 0.3 + 0.7*(780 - wavelength)/float(780-700)
+    elif wavelength > 675 and wavelength <= 780:
+        intensity = 0.3 + 0.7*(780 - wavelength)/float(780-675)
     
     red = int(red * 255 * intensity)
     green = int(green * 255 * intensity)
