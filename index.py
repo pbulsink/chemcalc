@@ -386,7 +386,7 @@ def ColourDrawer(wavelength=None):
                 resp = render_template('colour.html', error=error)
                 return resp
             logging.debug(wavelength)
-            red, green, blue= wavelength_to_rgb(wavelength)
+            red, green, blue= wavelength_to_rgb(int(wavelength))
             filename = "%s_nm.jpg" % wavelength
             directory = path.join(os.path.dirname(os.path.realpath(__file__)),
                                   'static','wavelength')
@@ -395,7 +395,7 @@ def ColourDrawer(wavelength=None):
             if not path.isfile(savepath):
                 im = Image.new('RGB',
                                (200, 200),
-                               (red, greem, blue))
+                               (red, green, blue))
                 #ensure the path is prepared
                 if not path.exists(directory):
                     makedirs(directory)
