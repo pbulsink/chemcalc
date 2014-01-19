@@ -1,6 +1,8 @@
 {% extends "base_layout.html" %}
 {% block Title%}Help - Elemental Analysis{% endblock %}
-{% block Navbar%}{% include "navbar.html" with active_page='ea' %}{% endblock %}
+{% with active_page="ea" %}
+{% block Navbar %}{% include "navbar.html"%}{% endblock %}
+{% endwith %}
 {% block Content %}
     <div class="container">
       <div class="well">

@@ -2,7 +2,9 @@
 {% block Title %}Wavelength Visualizer{% endblock %}
 {% block Head %}
 {% endblock %}
-{% block Navbar %}{% include "navbar.html" with active_page='colour' %}{% endblock %}
+{% with active_page="colour" %}
+{% block Navbar %}{% include "navbar.html"%}{% endblock %}
+{% endwith %}
 {% block Content %}
     <div class="container">
       <div>
