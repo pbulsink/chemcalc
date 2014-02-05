@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from chemcalculator_app import db
+from chemcalc import db
 
 class Plots(db.Model):
     id = db.Column(db.Integer, primary_key = True)

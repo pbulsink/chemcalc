@@ -7,7 +7,7 @@ from ast import literal_eval
 from flask import Flask, render_template, request, make_response, redirect, url_for, send_from_directory
 from script.solvent_correct import get_ea, solvent_calculate  # Import the calculator
 from script.chemcalc_utilities import *
-from chemcalculator_app import app
+from chemcalc import app
 
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
 #JINJA_ENV = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
