@@ -2,6 +2,7 @@
 import hmac
 import string
 import matplotlib
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from parse import parse  # Import the parser
@@ -9,6 +10,7 @@ from secret import secret
 from elements_list import ELEMENTS
 from os import path, makedirs
 from hashlib import md5
+
 
 def check_secure_val(secure_val):
     """Verify value is unmodified, and return it"""
@@ -23,13 +25,14 @@ def check_secure_val(secure_val):
 
 def is_floatable(s):
     """
-    Return true/false if string is float number
+    Return true/false if string s is float number
     """
     try:
         float(s)
     except ValueError:
         return False
     return True
+
 
 def make_secure_val(val):
     """Write string with value, hash, for cookies security checking"""
@@ -46,9 +49,9 @@ def parse_formula(formula, error):
         valid_formula = parse(formula).return_elements()
     except ValueError:
         valid_formula = None
-        error = error + "Not a valid Formula"
+        error += " Not a valid Formula."
     except:
-        error = error + "Unknown Error. "
+        error += " Unknown Error."
     return valid_formula, error
 
 
@@ -60,14 +63,14 @@ def shorten_formula(formula):
     fdict = dict((x[0], x[1]) for x in formula)
     short_formula = ""
     if "C" in fdict:
-        short_formula = short_formula + "C"
+        short_formula += "C"
         if fdict["C"] > 1:
-            short_formula = short_formula + str(fdict["C"])
+            short_formula += str(fdict["C"])
         del fdict["C"]
     if "H" in fdict:
-        short_formula = short_formula + "H"
+        short_formula += "H"
         if fdict["H"] > 1:
-            short_formula = short_formula + str(fdict["H"])
+            short_formula += str(fdict["H"])
         del fdict["H"]
     if fdict:
         flist = list()
@@ -77,7 +80,7 @@ def shorten_formula(formula):
         for e in flist:
             short_formula = short_formula + e[0]
             if e[1] > 1:
-                short_formula = short_formula + str(e[1])
+                short_formula += str(e[1])
     return short_formula
 
 
@@ -103,6 +106,7 @@ def sort_formula(formula):
             sorted_formula.append([e[0], e[1]])
     return sorted_formula
 
+
 def isotope_distribute(formula):
     """calculate isotopic distribution of the provided formula"""
     e_formula = list()
@@ -111,18 +115,18 @@ def isotope_distribute(formula):
         for f in range(0, e[1]):
             e_formula.append(e[0])
     molecule = list()
-    molecule.append([0,1.0])
+    molecule.append([0, 1.0])
     for a in e_formula:
         next_mol = list()
         for m in molecule:
             for i in ELEMENTS[a].isotopes:
-                next_mol.append([i[1]+m[0], (i[2]/100)*m[1]])
+                next_mol.append([i[1] + m[0], (i[2] / 100) * m[1]])
         mol = dict()
         for n in next_mol:
             if n[0] not in mol:
-                mol[n[0]]=n[1]
+                mol[n[0]] = n[1]
             else:
-                mol[n[0]]=mol[n[0]]+n[1]
+                mol[n[0]] = mol[n[0]] + n[1]
 
         molecule = list()
         for key, value in mol.iteritems():
@@ -132,19 +136,19 @@ def isotope_distribute(formula):
         maximum = 0.0
         for m in molecule:
             m = list(m)
-            if m[1]>maximum:
+            if m[1] > maximum:
                 maximum = m[1]
         for m in molecule:
-            m[1]=m[1]/maximum
+            m[1] = m[1] / maximum
         molecule = [mol for mol in molecule if mol[1] > precision]
     for m in molecule:
-        m[1]=m[1]*100.00
+        m[1] *= 100.00
     return molecule
 
 
 def listofzero(y):
     """Return a list of zeros of length y"""
-    return [0]*len(y)
+    return [0] * len(y)
 
 
 def plot_isotopes(isotopes, sformula):
@@ -154,7 +158,7 @@ def plot_isotopes(isotopes, sformula):
     for i in isotopes:
         x.append(i[0])
         y.append(i[1])
-    
+
     if x[0] < 200:
         xmin = x[0] - x[0] * 0.005
         xmax = x[-1] + x[-1] * 0.005
@@ -164,7 +168,7 @@ def plot_isotopes(isotopes, sformula):
     else:
         xmin = x[0] - 2
         xmax = x[-1] + 2
-    
+
     plt.figure()
     plt.vlines(x, [0], y, colors='b')
     plt.title('Isotopes: {}'.format(sformula))
@@ -180,6 +184,6 @@ def is_numeric(num):
     """Checks if the value is an integer"""
     try:
         int(num)
-    except ValueError, TypeError:
+    except ValueError or TypeError:
         return False
     return True

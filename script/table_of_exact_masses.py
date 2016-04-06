@@ -1730,8 +1730,10 @@ raw_tabled = """<tr>
 <td>99.2742</td>
 </tr>"""
 
+
 class Element:
     """Each element is an object"""
+
     def __init__(self, symbol):
         self.symbol = symbol
         self.isotopes = []
@@ -1741,17 +1743,17 @@ class Element:
 
 
 def process_raw(r):
-    raw1 = raw_tabled.replace('\n','')
-    raw2 = raw1.replace('<tr>','')
-    raw3 = raw2.replace('<td>','')
+    raw1 = raw_tabled.replace('\n', '')
+    raw2 = raw1.replace('<tr>', '')
+    raw3 = raw2.replace('<td>', '')
     raw4 = raw3.split('</tr>')
-    items = list ()
+    items = list()
     for r in raw4:
         items.append(r.split('</td>'))
     elements = dict()
-    
+
     items.remove([''])
-    
+
     for i in items:
         if i[1] not in elements:
             elements[i[1]] = Element(i[1])

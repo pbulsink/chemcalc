@@ -4,13 +4,15 @@ import jinja2
 import logging
 from logging.handlers import RotatingFileHandler
 from ast import literal_eval
-from flask import Flask, render_template, request, make_response, redirect, url_for, send_from_directory
-from script.solvent_correct import get_ea, solvent_calculate  # Import the calculator
+from flask import Flask, render_template, request, make_response, redirect, \
+    url_for, send_from_directory
+from script.solvent_correct import get_ea, \
+    solvent_calculate  # Import the calculator
 from script.chemcalc_utilities import *
 from chemcalc import app
 
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
-#JINJA_ENV = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
+# JINJA_ENV = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
 #                               autoescape=True)
 
 app = Flask(__name__)
@@ -22,7 +24,7 @@ if not app.debug:
 else:
     file_handler = RotatingFileHandler('debug.log', 'a', 1 * 1024 * 1024, 10)
     file_handler.setLevel(logging.WARNING)
-    
+
 app.logger.addHandler(file_handler)
 
 
@@ -57,7 +59,7 @@ def render_results(results, exp, solvent, formula):
         rexp.append(["H", exph, eresult["H"]])
         del eresult["H"]
     ulexp = eresult.items()
-    if ulexp != []:
+    if ulexp:
         for u in ulexp:
             if u[0] in exp:
                 expu = float(exp[u[0]])
@@ -88,7 +90,8 @@ def render_results(results, exp, solvent, formula):
             try:
                 r.append(float(r[3] - float(r[1])))
             except:
-                logging.exception("error ln 116 %s, %s" % (str(r[0]), str(rexp)))
+                logging.exception(
+                    "error ln 116 %s, %s" % (str(r[0]), str(rexp)))
         rendered_results['diff'] = results[5]
         # result_formula = formula + '*'
         # eventual printing out of formula * solvents.
@@ -137,28 +140,30 @@ def EaResultHandler():
 
     if formula == "":
         return redirect('/ea?r=nf')
-    elif solvent == []:
+    elif not solvent:
         results = get_ea(fparsed)
     else:
         results = solvent_calculate(fparsed, solvent, exp)
     rendered_results = render_results(results, exp, solvent, formula)
 
-    template_values = {'formula': formula,
-                       'rtype': rendered_results['rtype'],
-                       'exp': rendered_results['exp'],
-                       'solvent': rendered_results['solvent'],
-                       'diff': rendered_results['diff'],
-                       'result_formula': rendered_results['result_formula'],
-                       'mmass': rendered_results['mmass']}
+    template_values = {
+        'formula': formula,
+        'rtype': rendered_results['rtype'],
+        'exp': rendered_results['exp'],
+        'solvent': rendered_results['solvent'],
+        'diff': rendered_results['diff'],
+        'result_formula': rendered_results['result_formula'],
+        'mmass': rendered_results['mmass']
+    }
     return render_template("results.html", **template_values)
-                       #    formula=formula,
-                       #    rtype = rendered_results['rtype'],
-                       #    exp = rendered_results['exp'],
-                       #    solvent = rendered_results['solvent'],
-                       #    diff = rendered_results['diff'],
-                       #    result_formula = rendered_results['result_formula'],
-                       #    mmass = rendered_results['mmass']
-                       #)
+    #    formula=formula,
+    #    rtype = rendered_results['rtype'],
+    #    exp = rendered_results['exp'],
+    #    solvent = rendered_results['solvent'],
+    #    diff = rendered_results['diff'],
+    #    result_formula = rendered_results['result_formula'],
+    #    mmass = rendered_results['mmass']
+    # )
 
 
 @app.route('/ea/help')
@@ -198,9 +203,11 @@ def EaMainPage():
                  ["Cl", "exp_cl", ""],
                  ["Br", "exp_br", ""],
                  ["I", "exp_i", ""]]
-        t_var = {"formula": "", "exp_variables": e_var,
-                 "error": "", "solvent_variables": s_var,
-                 "other_variables": o_var}
+        t_var = {
+            "formula": "", "exp_variables": e_var,
+            "error": "", "solvent_variables": s_var,
+            "other_variables": o_var
+        }
         solvents = []
 
         resp = make_response(redirect('ea/results'))
@@ -222,7 +229,7 @@ def EaMainPage():
                     o[0] = d
         formula = request.form.get("formula")
         if not formula:
-            error = error + "You need to enter a formula. "
+            error += "You need to enter a formula. "
         else:
             valid_formula, error = parse_formula(formula, error)
 
@@ -230,22 +237,22 @@ def EaMainPage():
         for e in e_var:
             e[2] = str(request.form.get(e[1]))
             if not is_floatable(e[2]) and e[2] != "":
-                error = error + "Not a number error for Experimental %s. " % e[0]
+                error += "Not a number error for Experimental %s. " % e[0]
             elif e[2] != '':
                 exp = True
 
         if exp is False:
-            #want normal value
-            if solvents == []:
+            # want normal value
+            if not solvents:
                 resp.set_cookie('f', make_secure_val(formula))
                 return resp
             else:
-                #need to know how much solvent?
-                error = error + "Can't calculate solvent inclusion without experimental values. To include co-crystallized solvents, use the * notation. "
+                # need to know how much solvent?
+                error += "Can't calculate solvent inclusion without experimental values. To include co-crystallized solvents, use the * notation. "
 
         elif not error and solvents == "":
-            #need some solvents to contaminate it!
-            error = error + "Please select some solvents. "
+            # need some solvents to contaminate it!
+            error += "Please select some solvents. "
 
         elif not error:
             experimentals = []
@@ -300,7 +307,7 @@ def EaMainPage():
 
         error = ""
         formula = ""
-        #Handle returns of different types
+        # Handle returns of different types
         r = request.args.get('r')
         if r:
             if r == 'nf':
@@ -331,9 +338,11 @@ def EaMainPage():
             elif r.isnumeric():
                 error = "An error %s happened. Please try again" % r
 
-        template_values = {"formula": formula, "exp_variables": e_var,
-                           "solvent_variables": solvent_list, "error": error,
-                           "other_variables": other_variables}
+        template_values = {
+            "formula": formula, "exp_variables": e_var,
+            "solvent_variables": solvent_list, "error": error,
+            "other_variables": other_variables
+        }
         resp = make_response(render_template("eaform.html", **template_values))
         resp.set_cookie('f', "")
         resp.set_cookie('s', "")
@@ -353,11 +362,11 @@ def IsotopeHandler(relement=None):
     e = request.args.get('e')
     f = request.args.get('f')
     # Have to decide some way to handle mixed input. Do both!
-    isotopes = list ()
+    isotopes = list()
     selected_elements = False
     if relement in ELEMENTS:
         return redirect('/isotopes?e=%s' % relement)
-        
+
     if e in ELEMENTS:
         selected_elements = True
         if ELEMENTS[e].has_isotopes:
@@ -377,7 +386,7 @@ def IsotopeHandler(relement=None):
                 for i in ELEMENTS[key].isotopes:
                     isotopes.append([ELEMENTS[key].name, ELEMENTS[key].sym,
                                      ELEMENTS[key].ano, i])
-    
+
     element_symbols = list()
     element_names = list()
     for key in ELEMENTS:
@@ -390,8 +399,10 @@ def IsotopeHandler(relement=None):
     element_symbols.insert(0, ["All Elements", ""])
     isotopes = sorted(isotopes,
                       key=lambda isotopes: (isotopes[2], isotopes[3][0]))
-    template_values = {"elements": isotopes, "element_name": element_names,
-                       "element_symbol": element_symbols, "hclass": "isotopes"}
+    template_values = {
+        "elements": isotopes, "element_name": element_names,
+        "element_symbol": element_symbols, "hclass": "isotopes"
+    }
     return render_template("mass_table.html", **template_values)
 
 
@@ -406,6 +417,7 @@ def SitemapHandler():
     """Return the sitemap.html page"""
     return render_template("sitemap.html")
 
+
 @app.route('/exact-mass')
 def ExactMassDistribute(informula=None):
     """Put up the form to get info for exact mass."""
@@ -413,15 +425,15 @@ def ExactMassDistribute(informula=None):
         return redirect('/exact-mass/%s' % response)
     else:
         if informula:
-            #results
+            # results
             formula, error = parse_formula(informula, "")
             if error:
                 resp = render_template('exact-mass.html', error=error)
             isotopes = isotope_distribute(formula)
             plot = plot_isotopes(isotopes)
-            
+
             resp = make_response(render_template("distribute_results.html"))
-            
+
             return resp
         else:
             return render_template('exact-mass.html')
@@ -446,6 +458,7 @@ def page_not_found(e):
     resp.set_cookie('e', expires=0)
     return resp, 404
 
+
 @app.errorhandler(500)
 def server_error(e):
     """Simple 500 error handler"""
@@ -456,8 +469,7 @@ def server_error(e):
     resp.set_cookie('e', expires=0)
     return resp, 500
 
+
 if __name__ == "__main__":
     app.debug = True
     app.run()
-
-

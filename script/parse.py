@@ -44,8 +44,8 @@ class ElementSequence:
 
 
 class Tokenizer:
-    def __init__(self, input):
-        self.input = input + "<EOS>"
+    def __init__(self, inp):
+        self.input = inp + "<EOS>"
         self.i = 0
 
     def gettoken(self):
@@ -69,7 +69,8 @@ class Tokenizer:
         else:
             ttype = NAME
 
-    def error(self, msg):
+    @staticmethod
+    def error(msg):
         return ValueError(msg)
 
 
@@ -90,7 +91,7 @@ def parse(s):
         prefix = ""
         while ssplit[i][char:char+1].isdigit() or ssplit[i][char:char+1] == ".":
             prefix = prefix + ssplit[i][char:char+1]
-            char = char + 1
+            char += 1
         ssplit[i] = "({0}){1}".format(ssplit[i][char:], prefix)
     s = ''.join(ssplit)
 

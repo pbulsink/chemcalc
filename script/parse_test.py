@@ -4,8 +4,10 @@
 import unittest
 from parse import *
 
+
 class TestParser(unittest.TestCase):
     """Test the parsing for elements, etc"""
+
     def setUp(self):
         """Initialize the testing info"""
         self.goodSimple = "C2H4SO3"
@@ -117,6 +119,7 @@ class TestParser(unittest.TestCase):
         """Test for three letter element in formula"""
         self.assertEqual(parse(self.goodMultiThree).return_elements(),
                          [('C', 3), ('H', 5), ('Uut', 1)])
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

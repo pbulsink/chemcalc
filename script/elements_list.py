@@ -124,6 +124,7 @@ _data = r"""'Ac', 'Actinium', 89, 227.03
 
 class Element:
     """Each element is an object"""
+
     def __init__(self, symbol, name, atomicnumber, molweight):
         self.sym = symbol
         self.name = name
@@ -141,6 +142,7 @@ class Element:
 
     def get_isotopes(self):
         return self.isotopes
+
 
 def build_dict(s):
     """Make the element list into a dictionary"""

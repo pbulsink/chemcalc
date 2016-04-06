@@ -15,6 +15,7 @@ class Molecule:
     This is a molecule class that takes in the formula, and will be able to
     return the mass, or the elemental analysis
     """
+
     def __init__(self, formula, molfrac=1, name=""):
         self.formula = formula
         self.mass = self._calc_mass()
@@ -26,7 +27,7 @@ class Molecule:
         """Return the molar mass of the molecule to the self.mass"""
         mass = 0
         for e in self.formula:
-            mass = mass + float(ELEMENTS[e[0]].mw) * float(e[1])
+            mass += float(ELEMENTS[e[0]].mw) * float(e[1])
         return mass
 
     def ea(self):
@@ -36,7 +37,7 @@ class Molecule:
         else:
             calc_vals = dict()
             for e in self.formula:
-                calc_vals[e[0]] = (ELEMENTS[e[0]].mw * e[1] / self.mass)*100
+                calc_vals[e[0]] = (ELEMENTS[e[0]].mw * e[1] / self.mass) * 100
             self._ea_val = calc_vals
             return self._ea_val
 
@@ -87,18 +88,18 @@ def cycle_solvents(formula, solvents, num=0, looped=0):
     """
     for i in range(0, 51):
         solvents[num].molfrac = float(i) / 100
-        if num < len(solvents)-1:
-            looped = cycle_solvents(formula, solvents, num+1, looped)
+        if num < len(solvents) - 1:
+            looped = cycle_solvents(formula, solvents, num + 1, looped)
 
-        looped = looped + 1
+        looped += 1
         dirty_formula = dict(formula.formula)
         for s in solvents:
             for e in s.formula:
                 if e[0] in dirty_formula:
-                    #make the dirty formula
-                    dirty_formula[e[0]] = dirty_formula[e[0]] + e[1]*s.molfrac
+                    # make the dirty formula
+                    dirty_formula[e[0]] = dirty_formula[e[0]] + e[1] * s.molfrac
                 else:
-                    dirty_formula[e[0]] = e[1]*s.molfrac
+                    dirty_formula[e[0]] = e[1] * s.molfrac
         ea_vals = Molecule(dirty_formula.items()).ea()
         biggestdiff = 0
         for key, value in ea_vals.iteritems():
