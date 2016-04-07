@@ -39,7 +39,7 @@ def make_secure_val(val):
     return '%s|%s' % (str(val), hmac.new(secret, str(val)).hexdigest())
 
 
-def parse_formula(formula, error):
+def parse_formula(formula, error=""):
     """
     Parse formula to list of elements and number of appearances. Catch bad
     formulas and return error.
@@ -72,6 +72,21 @@ def shorten_formula(formula):
         if fdict["H"] > 1:
             short_formula += str(fdict["H"])
         del fdict["H"]
+    if "N" in fdict:
+        short_formula += "N"
+        if fdict["N"] > 1:
+            short_formula += str(fdict["N"])
+        del fdict["N"]
+    if "S" in fdict:
+        short_formula += "S"
+        if fdict["S"] > 1:
+            short_formula += str(fdict["S"])
+        del fdict["S"]
+    if "O" in fdict:
+        short_formula += "O"
+        if fdict["O"] > 1:
+            short_formula += str(fdict["O"])
+        del fdict["O"]
     if fdict:
         flist = list()
         for key in fdict:
@@ -88,6 +103,7 @@ def sort_formula(formula):
     """
     Take a 'parsed formula' style formula and return a compact elemental
     formula. IE CH3CH2CH2CH3 --> [["C":4],["H":10]] not H then C
+    Order: C, H, N, S, O, others
     """
     fdict = dict((x[0], x[1]) for x in formula)
     sorted_formula = list()
@@ -97,6 +113,15 @@ def sort_formula(formula):
     if "H" in fdict:
         sorted_formula.append(["H", fdict["H"]])
         del fdict["H"]
+    if "N" in fdict:
+        sorted_formula.append(["N", fdict["N"]])
+        del fdict["N"]
+    if "S" in fdict:
+        sorted_formula.append(["S", fdict["S"]])
+        del fdict["S"]
+    if "O" in fdict:
+        sorted_formula.append(["O", fdict["O"]])
+        del fdict["O"]
     if fdict:
         flist = list()
         for key in fdict:
@@ -181,7 +206,7 @@ def plot_isotopes(isotopes, sformula):
 
 
 def is_numeric(num):
-    """Checks if the value is an integer"""
+    """Checks if the value is an integer or float"""
     try:
         int(num)
     except ValueError or TypeError:
